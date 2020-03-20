@@ -1,0 +1,5 @@
+profile: service
+defaultPackage: micronaut.kotlin.coroutine.sample
+---
+testFramework: kotlintest
+sourceLanguage: kotlin
