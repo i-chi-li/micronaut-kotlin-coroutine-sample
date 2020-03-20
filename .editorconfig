@@ -1,0 +1,20 @@
+# 最上位かどうかを設定。false の場合は、さらに親ディレクトリを検索する。
+root = true
+
+# デフォルト設定
+[*]
+indent_style = space
+indent_size = 2
+
+end_of_line = lf
+charset = utf-8
+# 行末の空白を削除
+trim_trailing_whitespace = true
+# 最終行に空行を追加
+insert_final_newline = true
+
+[{*.java,*.kt,build.gradle,*.ts,*.js,*.yaml,*.yml}]
+indent_size = 4
+
+[*.bat]
+end_of_line = crlf
