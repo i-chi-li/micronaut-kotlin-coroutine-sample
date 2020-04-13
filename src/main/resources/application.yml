@@ -1,3 +1,41 @@
 micronaut:
-  application:
-    name: micronaut-kotlin-coroutine-sample
+    application:
+        name: micronaut-kotlin-coroutine-sample
+    caches:
+        user:
+            # 値のシリアライズとデシリアライズに使用される文字セット
+            charset: UTF-8
+            # 初期キャッシュ容量
+            initial-capacity: 0
+            # 最大キャッシュ登録数
+            maximumSize: 5
+            # 登録の最大の重み
+            maximum-weight: 100
+            # 書き込み後のキャッシュの有効期限
+            expire-after-write: 0
+            # アクセス後のキャッシュの有効期限
+            expire-after-access: "1ms"
+            # レコード統計を有効化
+            record-stats: true
+            # テストモードを有効化
+            test-mode: true
+        other-user:
+            maximumSize: 5
+            record-stats: true
+            test-mode: true
+
+# endpoints を利用するには、build.gradle に「implementation "io.micronaut:micronaut-management"」が必要
+endpoints:
+    caches:
+        enabled: true
+        # データ表示に認証が必要かどうか
+        sensitive: false
+# Retry Advice の設定値
+retry:
+    test:
+        attempts: "4"
+        delay: "200ms"
+# スケジュールタスクの設定値
+schedule:
+    conf:
+        fixed: "1m"

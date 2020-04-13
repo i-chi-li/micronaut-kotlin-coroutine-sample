@@ -1,15 +1,18 @@
 plugins {
-    id "org.jetbrains.kotlin.jvm" version "1.3.70"
-    id "org.jetbrains.kotlin.kapt" version "1.3.70"
-    id "org.jetbrains.kotlin.plugin.allopen" version "1.3.70"
+    id "org.jetbrains.kotlin.jvm" version "1.3.71"
+    id "org.jetbrains.kotlin.kapt" version "1.3.71"
+    id "org.jetbrains.kotlin.plugin.allopen" version "1.3.71"
     id "com.github.johnrengelman.shadow" version "5.2.0"
     id "application"
+    // IntelliJ IDEA の設定をするためのプラグイン
+    id "org.jetbrains.gradle.plugin.idea-ext" version "0.7"
 }
 
 version "0.1"
 group "micronaut.kotlin.coroutine.sample"
 
 repositories {
+    jcenter()
     mavenCentral()
     maven { url "https://jcenter.bintray.com" }
 }
@@ -23,18 +26,36 @@ dependencies {
     implementation platform("io.micronaut:micronaut-bom:$micronautVersion")
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlinVersion}"
     implementation "org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}"
-    // Kotlin Coroutine を利用する場合は、「kotlinx-coroutines-core」を追加
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.5"
+
+    // Kotlin Coroutine を利用する場合に追加
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:${coroutineVersion}"
+    // Kotlin Coroutine を Micronaut から利用する場合に追加
+    // Flow で Stream レスポンスを受けるような場合に、このライブラリがないと、以下のようなエラーとなる。
+    // ERROR i.m.r.intercept.RecoveryInterceptor - Type [micronaut.kotlin.coroutine.sample.HeadlineClient$Intercepted] executed with error: Cannot convert response publisher to Reactive type (Unsupported Reactive type): interface kotlinx.coroutines.flow.Flow
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-reactive:${coroutineVersion}"
+
     implementation "io.micronaut:micronaut-runtime"
     implementation "io.micronaut:micronaut-http-server-netty"
     implementation "io.micronaut:micronaut-http-client"
+    // Endpoint を利用する場合に必要
+    implementation "io.micronaut:micronaut-management"
+    // バリデーションを利用する場合に必要
+    implementation "io.micronaut:micronaut-validation"
+    // バリデーションで、MessageInterpolator を利用する場合に必要
+    implementation "io.micronaut.configuration:micronaut-hibernate-validator"
+
     kapt platform("io.micronaut:micronaut-bom:$micronautVersion")
+    // インジェクションを行うために必要
     kapt "io.micronaut:micronaut-inject-java"
+    // コンパイル時にアノテーションをバリデーションするために必要
     kapt "io.micronaut:micronaut-validation"
+
     kaptTest platform("io.micronaut:micronaut-bom:$micronautVersion")
     kaptTest "io.micronaut:micronaut-inject-java"
+
     runtimeOnly "com.fasterxml.jackson.module:jackson-module-kotlin:2.9.8"
     runtimeOnly "ch.qos.logback:logback-classic:1.2.3"
+
     testImplementation platform("io.micronaut:micronaut-bom:$micronautVersion")
     testImplementation "io.micronaut.test:micronaut-test-kotlintest"
     testImplementation "io.mockk:mockk:1.9.3"
@@ -48,34 +69,61 @@ dependencies {
     // 実際に不足しているクラスは、「io.micronaut.test.extensions.junit5.MicronautJunit5Extension」となる。
     testImplementation "io.micronaut.test:micronaut-test-junit5"
     testImplementation "org.junit.jupiter:junit-jupiter:5.6.0"
+
+    // Kotlin Coroutine テストユーティリティを利用する場合に追加
+    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:${coroutineVersion}"
+    // Kotlin Coroutine のデバッグ機能を利用する場合に追加
+    // ただし、現時点では、JUnit 5 には、対応していないため不採用（JUnit 4 のみ対応している）
+    // https://github.com/Kotlin/kotlinx.coroutines/tree/master/kotlinx-coroutines-debug
+    // testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-debug:${coroutineVersion}"
 }
+
+// Java ソースの文字コードを指定
+[compileJava, compileTestJava]*.options*.encoding = "UTF-8"
 
 test.classpath += configurations.developmentOnly
 
 mainClassName = "micronaut.kotlin.coroutine.sample.Application"
 
+kapt {
+    arguments {
+        // Micronaut でインクリメンタルアノテーション処理を有効化
+        arg("micronaut.processing.incremental", true)
+        // アノテーション処理対象クラスを指定する。カンマ区切りで複数指定可能
+        arg("micronaut.processing.annotations", "micronaut.kotlin.coroutine.sample.*,foo.bar.*")
+    }
+}
 
 test {
     useJUnitPlatform()
+    // '-Dkotlinx.coroutines.debug' は、スレッド名に Coroutine 名を追加するなど、Coroutine に関するログ出力を強化する
+    jvmArgs('-Dkotlinx.coroutines.debug')
 }
 
 allOpen {
-	annotation("io.micronaut.aop.Around")
+    // 以下で指定したアノテーションをクラスに付与すると、
+    // そのクラスおよび、子クラス自体とすべてのメンバーが、open 定義になる
+    // クラスに付与しないと（メソッドのみに付与しても）機能しない。
+    annotation("io.micronaut.aop.Around")
 }
 
 compileKotlin {
-	kotlinOptions {
-	    jvmTarget = '1.8'
-	    //Will retain parameter names for Java reflection
-	    javaParameters = true
-	}
+    kotlinOptions {
+        jvmTarget = '1.8'
+        //Will retain parameter names for Java reflection
+        javaParameters = true
+        // 「@ExperimentalCoroutinesApi」が付与された機能を利用する場合に追加
+        freeCompilerArgs += "-Xopt-in=kotlin.RequiresOptIn"
+    }
 }
 
 compileTestKotlin {
-	kotlinOptions {
-	    jvmTarget = '1.8'
-	    javaParameters = true
-	}
+    kotlinOptions {
+        jvmTarget = '1.8'
+        javaParameters = true
+        // 「@ExperimentalCoroutinesApi」が付与された機能を利用する場合に追加
+        freeCompilerArgs += "-Xopt-in=kotlin.RequiresOptIn"
+    }
 }
 
 shadowJar {
@@ -84,5 +132,50 @@ shadowJar {
 
 tasks.withType(JavaExec) {
     classpath += configurations.developmentOnly
-    jvmArgs('-noverify', '-XX:TieredStopAtLevel=1', '-Dcom.sun.management.jmxremote')
+    // '-Dkotlinx.coroutines.debug' は、スレッド名に Coroutine 名を追加するなど、Coroutine に関するログ出力を強化する
+    jvmArgs('-noverify', '-XX:TieredStopAtLevel=1', '-Dcom.sun.management.jmxremote', '-Dkotlinx.coroutines.debug')
+}
+
+task makeToc {
+    group "markdown"
+    description "Markdown の目次を作成。intoc (https://github.com/stakiran/intoc) のインストールが必要。"
+    def targetDir = "docs"
+    inputs.dir(targetDir)
+    outputs.dir(targetDir)
+    doFirst {
+        def mdFiles = fileTree(dir: targetDir, include: "**/*.md")
+        mdFiles.each { file ->
+            exec {
+                commandLine "intoc", "-input", file, "-edit"
+            }
+        }
+    }
+}
+
+// IntelliJ IDEA の設定
+import org.jetbrains.gradle.ext.EncodingConfiguration
+idea {
+    project {
+        settings {
+            // File -> Settings...(Ctrl + Alt + S) -> Editor -> File Encodings の設定
+            encodings {
+                // Project Encoding
+                encoding = "UTF-8"
+                // BOM for new UTF-8 files -> Create new UTF-8 files
+                bomPolicy = EncodingConfiguration.BomPolicy.WITH_NO_BOM
+                // Properties Files (*.properties)
+                properties {
+                    // Default encoding for properties files
+                    encoding = "UTF-8"
+                    // Transparent native-to-ascii conversion
+                    transparentNativeToAsciiConversion = true
+                    // ファイルまたは、ディレクトリを指定してエンコーディングを設定
+                    // ファイル指定の場合は、プロジェクトルートからの相対指定で、ディレクトリ階層も必須。ワイルドカード指定不可
+                    // ディレクトリ指定の場合もファイル指定と同様
+                    // 存在しないファイルやディレクトリを指定した場合、IntelliJ に反映されない。
+                    mapping["gradlew.bat"] = "windows-31j"
+                }
+            }
+        }
+    }
 }
