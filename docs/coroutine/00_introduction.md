@@ -45,7 +45,7 @@ Suspend 関数（中断関数）は、Coroutine 処理中で利用できる、�
 Suspend 関数は、suspend アクセス修飾子を関数の宣言に付与することにより定義できる。
 
 ### 非ブロッキング処理
-[Coroutine の基礎](docs/coroutine/10_basics.md) を参照。
+[Coroutine の基礎](10_basics.md) を参照。
 
 ## Suspend 関数に対するコンパイラの処理
 suspend アクセス修飾子を付与した関数は、コンパイラによって以下のような処理が行われる。
