@@ -32,3 +32,29 @@ fun <T> List<T>.asSpecialSequence(): Sequence<T> {
 ## generateSequence の実装例
 [【Kotlin】generateSequenceを使って反復法を実装する](https://qiita.com/wrongwrong/items/87818dd0a996c54b94e3)
 
+## @Target に指定する AnnotationTarget の種別
+
+| 設定値 | 対象 |
+| ----- | ----- |
+| CLASS | Class、 interface または、object 。annotation クラスも含む |
+| ANNOTATION_CLASS | Annotation クラスのみ |
+| TYPE_PARAMETER | Generic type parameter (未サポート) |
+| PROPERTY | クラスのプロパティ |
+| FIELD | フィールド（プロパティのバッキングフィールドも含む） |
+| LOCAL_VARIABLE | ローカル変数 |
+| VALUE_PARAMETER | 関数や、コンストラクタの引数 |
+| CONSTRUCTOR | プライマリまたは、セカンダリコンストラクタのみ |
+| FUNCTION | 関数のみ (コンストラクタを除く) |
+| PROPERTY_GETTER | プロパティゲッターのみ |
+| PROPERTY_SETTER | プロパティセッターのみ |
+| TYPE | 型。@JvmWildcard などで利用している。 |
+| EXPRESSION | Any expression（未調査） |
+| FILE | ファイル全体。@JvmPackageName などで利用している。 |
+| TYPEALIAS | TypeAlias 機能 |
+
+## TypeAlias 機能
+
+- [【Kotlin】 TypeAliasで関数リテラルに名前を付ける](https://qiita.com/AAkira/items/8f4e465cb12d4d395d8b)
+- [Kotlin typealiasの効果的な使いどころ](https://www.yo1000.com/kotlin-typealias/)
+- [Kotlin: typealiasを使ってめんどうなアノテーションを省略する](https://satoshun.github.io/2018/07/typealias_omit_annotation/)
+- [[Kotlin1.1-RC] Type aliasesの使い所](https://dev.classmethod.jp/articles/kotlin1-1-rc-type-aliases/)
