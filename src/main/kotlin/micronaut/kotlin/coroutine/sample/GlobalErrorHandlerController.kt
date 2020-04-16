@@ -30,7 +30,7 @@ class GlobalErrorHandlerController {
      */
     @Error(global = true)
     fun globalErrorHandler(request: HttpRequest<*>, e: Throwable): HttpResponse<JsonError> {
-        log.info("Start globalErrorHandler()")
+        log.info("Start globalErrorHandler()", e)
         val error = JsonError("Exception Error Handler: ${e.message}")
             .link(Link.SELF, Link.of(request.uri))
         return HttpResponse.serverError<JsonError>()
