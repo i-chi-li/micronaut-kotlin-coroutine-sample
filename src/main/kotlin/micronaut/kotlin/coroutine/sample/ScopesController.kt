@@ -15,7 +15,6 @@ import io.micronaut.runtime.http.scope.RequestScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.delay
 import javax.annotation.PostConstruct
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -32,6 +31,7 @@ import kotlin.random.Random
  * そのクラス固有のメソッドにアクセスした時点で、初期化処理が行われ、インスタンスが生成される。
  */
 @Controller("/scopes")
+@Suppress("LongParameterList", "TooManyFunctions", "MagicNumber")
 class ScopesController(
     // コンストラクタシングルトン
     private val constructorSingletonBean: SingletonBean,
@@ -87,6 +87,8 @@ class ScopesController(
     /**
      * Controller
      * Controller のハッシュを取得
+     *
+     * curl -i http://localhost:8080/scopes/controller
      */
     @Get("/controller")
     @Produces("${MediaType.APPLICATION_JSON}; ${MediaType.CHARSET_PARAMETER}=utf-8")
@@ -97,6 +99,8 @@ class ScopesController(
     /**
      * Singleton
      * constructorSingletonBean のハッシュを取得
+     *
+     * curl -i http://localhost:8080/scopes/constructorSingleton
      */
     @Get("/constructorSingleton")
     @Produces("${MediaType.APPLICATION_JSON}; ${MediaType.CHARSET_PARAMETER}=utf-8")
@@ -107,6 +111,8 @@ class ScopesController(
     /**
      * Singleton
      * fieldSingletonBean のハッシュを取得
+     *
+     * curl -i http://localhost:8080/scopes/fieldSingleton
      */
     @Get("/fieldSingleton")
     @Produces("${MediaType.APPLICATION_JSON}; ${MediaType.CHARSET_PARAMETER}=utf-8")
@@ -117,6 +123,8 @@ class ScopesController(
     /**
      * Singleton
      * dynamicSingletonBean のハッシュを取得
+     *
+     * curl -i http://localhost:8080/scopes/dynamicSingleton
      */
     @Get("/dynamicSingleton")
     @Produces("${MediaType.APPLICATION_JSON}; ${MediaType.CHARSET_PARAMETER}=utf-8")
@@ -127,6 +135,8 @@ class ScopesController(
     /**
      * Context
      * constructorContextBean のハッシュを取得
+     *
+     * curl -i http://localhost:8080/scopes/constructorContext
      */
     @Get("/constructorContext")
     @Produces("${MediaType.APPLICATION_JSON}; ${MediaType.CHARSET_PARAMETER}=utf-8")
@@ -137,6 +147,8 @@ class ScopesController(
     /**
      * Context
      * fieldContextBean のハッシュを取得
+     *
+     * curl -i http://localhost:8080/scopes/fieldContext
      */
     @Get("/fieldContext")
     @Produces("${MediaType.APPLICATION_JSON}; ${MediaType.CHARSET_PARAMETER}=utf-8")
@@ -148,6 +160,8 @@ class ScopesController(
     /**
      * Context
      * dynamicContextBean のハッシュを取得
+     *
+     * curl -i http://localhost:8080/scopes/dynamicContext
      */
     @Get("/dynamicContext")
     @Produces("${MediaType.APPLICATION_JSON}; ${MediaType.CHARSET_PARAMETER}=utf-8")
@@ -158,6 +172,8 @@ class ScopesController(
     /**
      * Prototype
      * constructorPrototypeBean のハッシュを取得
+     *
+     * curl -i http://localhost:8080/scopes/constructorPrototype
      */
     @Get("/constructorPrototype")
     @Produces("${MediaType.APPLICATION_JSON}; ${MediaType.CHARSET_PARAMETER}=utf-8")
@@ -168,6 +184,8 @@ class ScopesController(
     /**
      * Prototype
      * fieldPrototypeBean のハッシュを取得
+     *
+     * curl -i http://localhost:8080/scopes/fieldPrototype
      */
     @Get("/fieldPrototype")
     @Produces("${MediaType.APPLICATION_JSON}; ${MediaType.CHARSET_PARAMETER}=utf-8")
@@ -178,6 +196,8 @@ class ScopesController(
     /**
      * Prototype
      * dynamicPrototypeBean のハッシュを取得
+     *
+     * curl -i http://localhost:8080/scopes/dynamicPrototype
      */
     @Get("/dynamicPrototype")
     @Produces("${MediaType.APPLICATION_JSON}; ${MediaType.CHARSET_PARAMETER}=utf-8")
@@ -188,6 +208,8 @@ class ScopesController(
     /**
      * Infrastructure
      * constructorInfrastructureBean のハッシュを取得
+     *
+     * curl -i http://localhost:8080/scopes/constructorInfrastructure
      */
     @Get("/constructorInfrastructure")
     @Produces("${MediaType.APPLICATION_JSON}; ${MediaType.CHARSET_PARAMETER}=utf-8")
@@ -198,6 +220,8 @@ class ScopesController(
     /**
      * Infrastructure
      * fieldInfrastructureBean のハッシュを取得
+     *
+     * curl -i http://localhost:8080/scopes/fieldInfrastructure
      */
     @Get("/fieldInfrastructure")
     @Produces("${MediaType.APPLICATION_JSON}; ${MediaType.CHARSET_PARAMETER}=utf-8")
@@ -208,6 +232,8 @@ class ScopesController(
     /**
      * Infrastructure
      * dynamicInfrastructureBean のハッシュを取得
+     *
+     * curl -i http://localhost:8080/scopes/dynamicInfrastructure
      */
     @Get("/dynamicInfrastructure")
     @Produces("${MediaType.APPLICATION_JSON}; ${MediaType.CHARSET_PARAMETER}=utf-8")
@@ -218,6 +244,8 @@ class ScopesController(
     /**
      * ThreadLocal
      * constructorThreadLocalBean のハッシュを取得
+     *
+     * curl -i http://localhost:8080/scopes/constructorThreadLocal
      */
     @Get("/constructorThreadLocal")
     @Produces("${MediaType.APPLICATION_JSON}; ${MediaType.CHARSET_PARAMETER}=utf-8")
@@ -232,6 +260,8 @@ class ScopesController(
     /**
      * ThreadLocal
      * fieldThreadLocalBean のハッシュを取得
+     *
+     * curl -i http://localhost:8080/scopes/fieldThreadLocal
      */
     @Get("/fieldThreadLocal")
     @Produces("${MediaType.APPLICATION_JSON}; ${MediaType.CHARSET_PARAMETER}=utf-8")
@@ -246,6 +276,8 @@ class ScopesController(
     /**
      * ThreadLocal
      * dynamicThreadLocalBean のハッシュを取得
+     *
+     * curl -i http://localhost:8080/scopes/dynamicThreadLocal
      */
     @Get("/dynamicThreadLocal")
     @Produces("${MediaType.APPLICATION_JSON}; ${MediaType.CHARSET_PARAMETER}=utf-8")
@@ -262,6 +294,8 @@ class ScopesController(
      * Refreshable
      * constructorRefreshableBean のハッシュを取得
      * リクエスト処理中でも、リフレッシュされるとインスタンスが切り替わる！！
+     *
+     * curl -i http://localhost:8080/scopes/constructorRefreshable
      */
     @Get("/constructorRefreshable")
     @Produces("${MediaType.APPLICATION_JSON}; ${MediaType.CHARSET_PARAMETER}=utf-8")
@@ -283,6 +317,8 @@ class ScopesController(
      * Refreshable
      * fieldRefreshableBean のハッシュを取得
      * リクエスト処理中でも、リフレッシュされるとインスタンスが切り替わる！！
+     *
+     * curl -i http://localhost:8080/scopes/fieldRefreshable
      */
     @Get("/fieldRefreshable")
     @Produces("${MediaType.APPLICATION_JSON}; ${MediaType.CHARSET_PARAMETER}=utf-8")
@@ -303,6 +339,8 @@ class ScopesController(
     /**
      * Refreshable
      * dynamicRefreshableBean のハッシュを取得
+     *
+     * curl -i http://localhost:8080/scopes/dynamicRefreshable
      */
     @Get("/dynamicRefreshable")
     @Produces("${MediaType.APPLICATION_JSON}; ${MediaType.CHARSET_PARAMETER}=utf-8")
@@ -325,6 +363,8 @@ class ScopesController(
     /**
      * RequestScope
      * constructorRequestScopeBean のハッシュを取得
+     *
+     * curl -i http://localhost:8080/scopes/constructorRequestScope
      */
     @Get("/constructorRequestScope")
     @Produces("${MediaType.APPLICATION_JSON}; ${MediaType.CHARSET_PARAMETER}=utf-8")
@@ -338,6 +378,8 @@ class ScopesController(
     /**
      * RequestScope
      * fieldRequestScopeBean のハッシュを取得
+     *
+     * curl -i http://localhost:8080/scopes/fieldRequestScope
      */
     @Get("/fieldRequestScope")
     @Produces("${MediaType.APPLICATION_JSON}; ${MediaType.CHARSET_PARAMETER}=utf-8")
@@ -351,6 +393,8 @@ class ScopesController(
     /**
      * RequestScope
      * dynamicRequestScopeBean のハッシュを取得
+     *
+     * curl -i http://localhost:8080/scopes/dynamicRequestScope
      */
     @Get("/dynamicRequestScope")
     @Produces("${MediaType.APPLICATION_JSON}; ${MediaType.CHARSET_PARAMETER}=utf-8")
@@ -364,17 +408,13 @@ class ScopesController(
 }
 
 // ハッシュ情報格納用
-data class HashInfo(val name: String, val className: String, val id: Int, val threadName: String = Thread.currentThread().name) {
+data class HashInfo(
+    val name: String, val className: String, val id: Int, val threadName: String = Thread.currentThread().name) {
     constructor(name: String, bean: Bean, threadName: String = Thread.currentThread().name) :
         this(name, bean.javaClass.simpleName, bean.id, threadName)
 }
 
-// オブジェクトのハッシュとスレッドを表示
-private fun Bean.printHash(name: String) {
-    println("$name id[${id}] ${Thread.currentThread().name}")
-}
-
-private fun printClassHash(name: String, bean: Bean) {
+private fun printClassHash(@Suppress("SameParameterValue") name: String, bean: Bean) {
     println("${bean.javaClass.simpleName} $name id[${bean.id}]")
 }
 
