@@ -60,7 +60,7 @@ class GlobalErrorHandlerController {
      * curl -i http://localhost:8080/handler/exception
      */
     @Get("/exception")
-    @Produces("${MediaType.APPLICATION_JSON}; ${MediaType.CHARSET_PARAMETER}=utf-8")
+    @Produces(MediaType.APPLICATION_JSON)
     fun exception(): HttpResponse<String> {
         throw SQLException("throw Something Throwable")
     }
@@ -70,7 +70,7 @@ class GlobalErrorHandlerController {
      * curl -i http://localhost:8080/handler/status
      */
     @Get("/status")
-    @Produces("${MediaType.APPLICATION_JSON}; ${MediaType.CHARSET_PARAMETER}=utf-8")
+    @Produces(MediaType.APPLICATION_JSON)
     fun status(): HttpResponse<String> {
         return HttpResponse.serverError("Response Server Error")
     }

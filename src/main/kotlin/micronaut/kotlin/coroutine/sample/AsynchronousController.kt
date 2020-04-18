@@ -5,18 +5,27 @@ import io.micronaut.http.MediaType
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
 import io.micronaut.http.annotation.Produces
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.asContextElement
 import kotlinx.coroutines.async
+import kotlinx.coroutines.channels.actor
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeoutOrNull
 import org.slf4j.LoggerFactory
 import java.time.LocalTime
 import javax.inject.Singleton
+import javax.print.attribute.standard.Media
 import kotlin.concurrent.thread
 import kotlin.coroutines.CoroutineContext
+import kotlin.system.measureTimeMillis
 
 @Controller("/async")
 class AsynchronousController(
@@ -35,7 +44,7 @@ class AsynchronousController(
      * curl -i http://localhost:8080/async/globalScope?sync=true
      */
     @Get("/globalScope")
-    @Produces("${MediaType.APPLICATION_JSON}; ${MediaType.CHARSET_PARAMETER}=utf-8")
+    @Produces(MediaType.APPLICATION_JSON)
     suspend fun globalScope(sync: Boolean?): String {
         log.info("Start globalScope()")
 
@@ -67,7 +76,7 @@ class AsynchronousController(
                 // ジョブの完了を待ち、値を取得する。
                 deferred.await()
             }
-                // タイムアウトした場合に返す値
+            // タイムアウトした場合に返す値
                 ?: "TimeOuted"
         } else {
             // ジョブの完了を待たない場合
@@ -79,13 +88,15 @@ class AsynchronousController(
     }
 
     /**
-     * グローバルスコープでジョブを実行
+     * Coroutine で ThreadLocal を利用するサンプル
+     * Coroutine では、@RequestScope や、@ThreadScope が利用できないため、
+     * その代替方法となる。
      *
-     * curl -i http://localhost:8080/async/global
+     * curl -i http://localhost:8080/async/threadLocal
      */
-    @Get("/global")
-    @Produces("${MediaType.APPLICATION_JSON}; ${MediaType.CHARSET_PARAMETER}=utf-8")
-    suspend fun global(): String {
+    @Get("/threadLocal")
+    @Produces(MediaType.APPLICATION_JSON)
+    suspend fun threadLocal(): String {
         // リクエスト処理先頭で、必要な情報をコンテナに格納する。
         requestDataContainer.requestData = RequestData("foo", 10)
         requestDataContainer.authData = AuthData("token")
@@ -108,7 +119,12 @@ class AsynchronousController(
             }
 
             delay(500)
+            // ThreadLocal の値を入れ替えても、他の Coroutine へは伝播しない。
+            // これは、この処理が完了した後、別のリクエストが来た場合に、
+            // 前のリクエストと同じスレッドで処理が開始されても、
+            // ThreadLocal の値を設定した時に、処理中の別の Coroutine には影響しない事を意味する。
             requestDataContainer.requestData = RequestData("bar", 20)
+            // 当然、値の中身を変更すれば、他の Coroutine でも変更が反映される。
             requestData.name = "hoge"
             requestData.age = 30
             log.info("Finish global() [$requestData]")
@@ -200,3 +216,48 @@ class RequestData(
 data class AuthData(
     val token: String
 )
+
+suspend fun massiveRun(action: suspend () -> Unit) {
+    val n = 100
+    val k = 1000
+    val time = measureTimeMillis {
+        coroutineScope {
+            repeat(n) {
+                launch {
+                    repeat(k) { action() }
+                }
+            }
+        }
+    }
+    println("Completed ${n * k} actions in $time ms")
+}
+
+sealed class CounterMsg
+
+object IncCounter : CounterMsg()
+
+class GetCounter(val response: CompletableDeferred<Int>) : CounterMsg()
+
+@OptIn(ObsoleteCoroutinesApi::class)
+fun CoroutineScope.counterActor() = actor<CounterMsg> {
+    var counter = 0
+    for (msg in channel) {
+        when (msg) {
+            is IncCounter -> counter++
+            is GetCounter -> msg.response.complete(counter)
+        }
+    }
+}
+
+fun main() = runBlocking<Unit> {
+    val counter = counterActor()
+    withContext(Dispatchers.Default) {
+        massiveRun {
+            counter.send(IncCounter)
+        }
+    }
+    val response = CompletableDeferred<Int>()
+    counter.send(GetCounter(response))
+    println("Counter: ${response.await()}")
+    counter.close()
+}
