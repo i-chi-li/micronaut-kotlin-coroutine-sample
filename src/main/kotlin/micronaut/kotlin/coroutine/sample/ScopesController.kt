@@ -91,7 +91,7 @@ class ScopesController(
      * curl -i http://localhost:8080/scopes/controller
      */
     @Get("/controller")
-    @Produces("${MediaType.APPLICATION_JSON}; ${MediaType.CHARSET_PARAMETER}=utf-8")
+    @Produces(MediaType.APPLICATION_JSON)
     fun controller(): HashInfo {
         return HashInfo("controller", this)
     }
@@ -103,7 +103,7 @@ class ScopesController(
      * curl -i http://localhost:8080/scopes/constructorSingleton
      */
     @Get("/constructorSingleton")
-    @Produces("${MediaType.APPLICATION_JSON}; ${MediaType.CHARSET_PARAMETER}=utf-8")
+    @Produces(MediaType.APPLICATION_JSON)
     fun constructorSingleton(): HashInfo {
         return HashInfo("constructorSingletonBean", constructorSingletonBean)
     }
@@ -115,7 +115,7 @@ class ScopesController(
      * curl -i http://localhost:8080/scopes/fieldSingleton
      */
     @Get("/fieldSingleton")
-    @Produces("${MediaType.APPLICATION_JSON}; ${MediaType.CHARSET_PARAMETER}=utf-8")
+    @Produces(MediaType.APPLICATION_JSON)
     fun fieldSingleton(): HashInfo {
         return HashInfo("fieldSingletonBean", fieldSingletonBean)
     }
@@ -127,7 +127,7 @@ class ScopesController(
      * curl -i http://localhost:8080/scopes/dynamicSingleton
      */
     @Get("/dynamicSingleton")
-    @Produces("${MediaType.APPLICATION_JSON}; ${MediaType.CHARSET_PARAMETER}=utf-8")
+    @Produces(MediaType.APPLICATION_JSON)
     fun dynamicSingleton(): HashInfo {
         return HashInfo("dynamicSingletonBean", applicationContext.getBean(SingletonBean::class.java))
     }
@@ -139,7 +139,7 @@ class ScopesController(
      * curl -i http://localhost:8080/scopes/constructorContext
      */
     @Get("/constructorContext")
-    @Produces("${MediaType.APPLICATION_JSON}; ${MediaType.CHARSET_PARAMETER}=utf-8")
+    @Produces(MediaType.APPLICATION_JSON)
     fun constructorContext(): HashInfo {
         return HashInfo("constructorContextBean", constructorContextBean)
     }
@@ -151,7 +151,7 @@ class ScopesController(
      * curl -i http://localhost:8080/scopes/fieldContext
      */
     @Get("/fieldContext")
-    @Produces("${MediaType.APPLICATION_JSON}; ${MediaType.CHARSET_PARAMETER}=utf-8")
+    @Produces(MediaType.APPLICATION_JSON)
     fun fieldContext(): HashInfo {
         return HashInfo("fieldContextBean", fieldContextBean)
     }
@@ -164,7 +164,7 @@ class ScopesController(
      * curl -i http://localhost:8080/scopes/dynamicContext
      */
     @Get("/dynamicContext")
-    @Produces("${MediaType.APPLICATION_JSON}; ${MediaType.CHARSET_PARAMETER}=utf-8")
+    @Produces(MediaType.APPLICATION_JSON)
     fun dynamicContext(): HashInfo {
         return HashInfo("dynamicContext", applicationContext.getBean(ContextBean::class.java))
     }
@@ -176,7 +176,7 @@ class ScopesController(
      * curl -i http://localhost:8080/scopes/constructorPrototype
      */
     @Get("/constructorPrototype")
-    @Produces("${MediaType.APPLICATION_JSON}; ${MediaType.CHARSET_PARAMETER}=utf-8")
+    @Produces(MediaType.APPLICATION_JSON)
     fun constructorPrototype(): HashInfo {
         return HashInfo("constructorPrototypeBean", constructorPrototypeBean)
     }
@@ -188,7 +188,7 @@ class ScopesController(
      * curl -i http://localhost:8080/scopes/fieldPrototype
      */
     @Get("/fieldPrototype")
-    @Produces("${MediaType.APPLICATION_JSON}; ${MediaType.CHARSET_PARAMETER}=utf-8")
+    @Produces(MediaType.APPLICATION_JSON)
     fun fieldPrototype(): HashInfo {
         return HashInfo("fieldPrototypeBean", fieldPrototypeBean)
     }
@@ -200,7 +200,7 @@ class ScopesController(
      * curl -i http://localhost:8080/scopes/dynamicPrototype
      */
     @Get("/dynamicPrototype")
-    @Produces("${MediaType.APPLICATION_JSON}; ${MediaType.CHARSET_PARAMETER}=utf-8")
+    @Produces(MediaType.APPLICATION_JSON)
     fun dynamicPrototype(): HashInfo {
         return HashInfo("dynamicPrototypeBean", applicationContext.getBean(PrototypeBean::class.java))
     }
@@ -212,7 +212,7 @@ class ScopesController(
      * curl -i http://localhost:8080/scopes/constructorInfrastructure
      */
     @Get("/constructorInfrastructure")
-    @Produces("${MediaType.APPLICATION_JSON}; ${MediaType.CHARSET_PARAMETER}=utf-8")
+    @Produces(MediaType.APPLICATION_JSON)
     fun constructorInfrastructure(): HashInfo {
         return HashInfo("constructorInfrastructureBean", constructorInfrastructureBean)
     }
@@ -224,7 +224,7 @@ class ScopesController(
      * curl -i http://localhost:8080/scopes/fieldInfrastructure
      */
     @Get("/fieldInfrastructure")
-    @Produces("${MediaType.APPLICATION_JSON}; ${MediaType.CHARSET_PARAMETER}=utf-8")
+    @Produces(MediaType.APPLICATION_JSON)
     fun fieldInfrastructure(): HashInfo {
         return HashInfo("fieldInfrastructureBean", fieldInfrastructureBean)
     }
@@ -236,7 +236,7 @@ class ScopesController(
      * curl -i http://localhost:8080/scopes/dynamicInfrastructure
      */
     @Get("/dynamicInfrastructure")
-    @Produces("${MediaType.APPLICATION_JSON}; ${MediaType.CHARSET_PARAMETER}=utf-8")
+    @Produces(MediaType.APPLICATION_JSON)
     fun dynamicInfrastructure(): HashInfo {
         return HashInfo("dynamicInfrastructureBean", applicationContext.getBean(InfrastructureBean::class.java))
     }
@@ -248,7 +248,7 @@ class ScopesController(
      * curl -i http://localhost:8080/scopes/constructorThreadLocal
      */
     @Get("/constructorThreadLocal")
-    @Produces("${MediaType.APPLICATION_JSON}; ${MediaType.CHARSET_PARAMETER}=utf-8")
+    @Produces(MediaType.APPLICATION_JSON)
     suspend fun constructorThreadLocal(): List<HashInfo> = coroutineScope {
         (1..3).map {
             async {
@@ -264,7 +264,7 @@ class ScopesController(
      * curl -i http://localhost:8080/scopes/fieldThreadLocal
      */
     @Get("/fieldThreadLocal")
-    @Produces("${MediaType.APPLICATION_JSON}; ${MediaType.CHARSET_PARAMETER}=utf-8")
+    @Produces(MediaType.APPLICATION_JSON)
     suspend fun fieldThreadLocal(): List<HashInfo> = coroutineScope {
         (1..3).map {
             async {
@@ -280,7 +280,7 @@ class ScopesController(
      * curl -i http://localhost:8080/scopes/dynamicThreadLocal
      */
     @Get("/dynamicThreadLocal")
-    @Produces("${MediaType.APPLICATION_JSON}; ${MediaType.CHARSET_PARAMETER}=utf-8")
+    @Produces(MediaType.APPLICATION_JSON)
     suspend fun dynamicThreadLocal(): List<HashInfo> = coroutineScope {
         (1..3).map {
             async {
@@ -298,7 +298,7 @@ class ScopesController(
      * curl -i http://localhost:8080/scopes/constructorRefreshable
      */
     @Get("/constructorRefreshable")
-    @Produces("${MediaType.APPLICATION_JSON}; ${MediaType.CHARSET_PARAMETER}=utf-8")
+    @Produces(MediaType.APPLICATION_JSON)
     suspend fun constructorRefreshable(): List<HashInfo> = coroutineScope {
         // 同じインスタンスが返るはず
         val same = (1..3).map {
@@ -321,7 +321,7 @@ class ScopesController(
      * curl -i http://localhost:8080/scopes/fieldRefreshable
      */
     @Get("/fieldRefreshable")
-    @Produces("${MediaType.APPLICATION_JSON}; ${MediaType.CHARSET_PARAMETER}=utf-8")
+    @Produces(MediaType.APPLICATION_JSON)
     suspend fun fieldRefreshable(): List<HashInfo> = coroutineScope {
         // 同じインスタンスが返るはず
         val same = (1..3).map {
@@ -343,7 +343,7 @@ class ScopesController(
      * curl -i http://localhost:8080/scopes/dynamicRefreshable
      */
     @Get("/dynamicRefreshable")
-    @Produces("${MediaType.APPLICATION_JSON}; ${MediaType.CHARSET_PARAMETER}=utf-8")
+    @Produces(MediaType.APPLICATION_JSON)
     suspend fun dynamicRefreshable(): List<HashInfo> = coroutineScope {
         // 同じインスタンスが返るはず
         val same = (1..3).map {
@@ -367,7 +367,7 @@ class ScopesController(
      * curl -i http://localhost:8080/scopes/constructorRequestScope
      */
     @Get("/constructorRequestScope")
-    @Produces("${MediaType.APPLICATION_JSON}; ${MediaType.CHARSET_PARAMETER}=utf-8")
+    @Produces(MediaType.APPLICATION_JSON)
     suspend fun constructorRequestScope(): List<HashInfo> = coroutineScope {
         // 同じインスタンスが返るはず
         (1..3).map {
@@ -382,7 +382,7 @@ class ScopesController(
      * curl -i http://localhost:8080/scopes/fieldRequestScope
      */
     @Get("/fieldRequestScope")
-    @Produces("${MediaType.APPLICATION_JSON}; ${MediaType.CHARSET_PARAMETER}=utf-8")
+    @Produces(MediaType.APPLICATION_JSON)
     suspend fun fieldRequestScope(): List<HashInfo> = coroutineScope {
         // 同じインスタンスが返るはず
         (1..3).map {
@@ -397,7 +397,7 @@ class ScopesController(
      * curl -i http://localhost:8080/scopes/dynamicRequestScope
      */
     @Get("/dynamicRequestScope")
-    @Produces("${MediaType.APPLICATION_JSON}; ${MediaType.CHARSET_PARAMETER}=utf-8")
+    @Produces(MediaType.APPLICATION_JSON)
     suspend fun dynamicRequestScope(): List<HashInfo> = coroutineScope {
         // 同じインスタンスが返るはず
         (1..3).map {

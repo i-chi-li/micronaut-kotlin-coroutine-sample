@@ -79,7 +79,7 @@ class IntroductionAdviceController(
     val stubExample: StubExample
 ) {
     @Get("/")
-    @Produces("${MediaType.APPLICATION_JSON}; ${MediaType.CHARSET_PARAMETER}=utf-8")
+    @Produces(MediaType.APPLICATION_JSON)
     fun index(): String {
         println("number: ${stubExample.number}, date: ${stubExample.date}, string: ${stubExample.string}")
 

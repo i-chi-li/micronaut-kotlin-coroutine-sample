@@ -46,7 +46,7 @@ class CustomValidatorController(
      * curl -i http://localhost:8080/valid -H "Accept-Language: en"
      */
     @Get("/")
-    @Produces("${MediaType.APPLICATION_JSON}; ${MediaType.CHARSET_PARAMETER}=utf-8")
+    @Produces(MediaType.APPLICATION_JSON)
     fun index(@Header acceptLanguage: String?): String {
         // Locale 取得
         println("acceptLanguage: $acceptLanguage")

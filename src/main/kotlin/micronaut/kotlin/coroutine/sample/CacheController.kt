@@ -16,7 +16,7 @@ open class CacheController(
     private val cacheBean: CacheBean
 ) {
     @Get("/{groupId}/{userId}/{name}")
-    @Produces("${MediaType.APPLICATION_JSON}; ${MediaType.CHARSET_PARAMETER}=utf-8")
+    @Produces(MediaType.APPLICATION_JSON)
     fun index(groupId: Int, userId: Int, name: String, memo: String): String {
         log.info("Start index")
         log.info("groupId: $groupId, userId: $userId, name: $name, memo: $memo")

@@ -29,7 +29,7 @@ class AroundAdviceController(
      * curl http://localhost:8080/around/notnull?name=foo
      */
     @Get("/notnull{?name}")
-    @Produces("${MediaType.APPLICATION_JSON}; ${MediaType.CHARSET_PARAMETER}=utf-8")
+    @Produces(MediaType.APPLICATION_JSON)
     fun notNull(name: String?): String {
         val result = runCatching {
             notNullExample.doWork(name)
@@ -42,7 +42,7 @@ class AroundAdviceController(
      * curl http://localhost:8080/around/notnullunit?name=foo
      */
     @Get("/notnullunit{?name}")
-    @Produces("${MediaType.APPLICATION_JSON}; ${MediaType.CHARSET_PARAMETER}=utf-8")
+    @Produces(MediaType.APPLICATION_JSON)
     fun notNullUnit(name: String?): String {
         val result = runCatching {
             notNullExample.doWorkUnit(name)
@@ -200,7 +200,7 @@ class FactoryController(
 
     // curl http://localhost:8080/factory/1
     @Get("/1")
-    @Produces("${MediaType.APPLICATION_JSON}; ${MediaType.CHARSET_PARAMETER}=utf-8")
+    @Produces(MediaType.APPLICATION_JSON)
     fun get1(): String {
         val bean = applicationContext.getBean(MyBean::class.java, Qualifiers.byName("myBean1"))
         // bean.toString() にキャッシュ機能が無いため、毎回異なる num の値となる。
@@ -210,7 +210,7 @@ class FactoryController(
 
     // curl http://localhost:8080/factory/2
     @Get("/2")
-    @Produces("${MediaType.APPLICATION_JSON}; ${MediaType.CHARSET_PARAMETER}=utf-8")
+    @Produces(MediaType.APPLICATION_JSON)
     fun get2(): String {
         log.info("Start get2")
         repeat(3) {
@@ -225,7 +225,7 @@ class FactoryController(
 
     // curl http://localhost:8080/factory/3
     @Get("/3")
-    @Produces("${MediaType.APPLICATION_JSON}; ${MediaType.CHARSET_PARAMETER}=utf-8")
+    @Produces(MediaType.APPLICATION_JSON)
     fun get3(): String {
         val bean = applicationContext.getBean(MyBean::class.java, Qualifiers.byName("myBean3"))
         log.info("$bean : 呼び出し毎に、異なるインスタンスで、num の値が変わる。")

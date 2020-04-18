@@ -6,16 +6,23 @@ import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
 import io.micronaut.http.annotation.Produces
 import io.micronaut.http.annotation.Status
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.ThreadContextElement
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import java.time.ZonedDateTime
 import kotlin.coroutines.CoroutineContext
 
 @Controller("/coroutine")
-class CoroutineController {
+abstract class CoroutineController {
     @Get("/")
-    @Produces("${MediaType.TEXT_PLAIN}; ${MediaType.CHARSET_PARAMETER}=utf-8")
+    @Produces(CustomMediaType.TEXT_PLAIN_UTF8)
     // メソッドを Coroutine 対応にするため、suspend 関数にできる
     suspend fun index(): String {
         coroutineScope {
@@ -25,7 +32,7 @@ class CoroutineController {
     }
 
     @Get("/delayed")
-    @Produces("${MediaType.TEXT_PLAIN}; ${MediaType.CHARSET_PARAMETER}=utf-8")
+    @Produces(CustomMediaType.TEXT_PLAIN_UTF8)
     suspend fun delayed(): String {
         delay(1)
         return "Delayed"
@@ -34,7 +41,7 @@ class CoroutineController {
     // ステータスを返すだけの関数でも、Suspend 関数として機能する。
     @Status(HttpStatus.CREATED)
     @Get("/status")
-    suspend fun status(): Unit {
+    suspend fun status() {
     }
 
     @Status(HttpStatus.CREATED)
@@ -44,7 +51,8 @@ class CoroutineController {
     }
 
     // Coroutine の Flow を利用することにより、サーバー側でストリーミング処理を実装できる。
-    @Get("/headlinesWithFlow", processes = [MediaType.APPLICATION_JSON_STREAM])
+    @Get("/headlinesWithFlow")
+    @Produces(MediaType.APPLICATION_JSON_STREAM)
     internal fun streamHeadlinesWithFlow(): Flow<Headline> =
         flow {
             println("Start streamHeadlinesWithFlow")
@@ -58,7 +66,7 @@ class CoroutineController {
         }
 
     @Get("/background")
-    @Produces("${MediaType.TEXT_PLAIN};${MediaType.CHARSET_PARAMETER}=utf-8")
+    @Produces(CustomMediaType.TEXT_PLAIN_UTF8)
     suspend fun background(): String {
         GlobalScope.launch {
             delay(1000L)

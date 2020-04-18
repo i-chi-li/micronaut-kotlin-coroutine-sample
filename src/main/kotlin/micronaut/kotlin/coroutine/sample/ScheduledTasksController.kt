@@ -74,7 +74,7 @@ class ScheduledTasksController(
     private val log = LoggerFactory.getLogger(this.javaClass)
 
     @Get("/dynamic")
-    @Produces("${MediaType.TEXT_PLAIN}; ${MediaType.CHARSET_PARAMETER}=utf-8")
+    @Produces(MediaType.TEXT_PLAIN)
     fun dynamic(): String {
         val task1 = taskScheduler.schedule(Duration.ofSeconds(0), Callable {
             log.info("Start dynamic task")
