@@ -134,6 +134,86 @@ fun main() = runBlocking<Unit> {
 11:33:27.732 [main @coroutine#1] INFO  sample - Done!
 ```
 
+### Channel プロデューサのサンプルコード
+
+```kotlin
+@OptIn(ExperimentalCoroutinesApi::class)
+fun main() = runBlocking<Unit> {
+    // start のデフォルトは、CoroutineStart.LAZY で、サブスクライブをした時点で処理を開始する。
+    // Channel のデフォルトキュー格納上限数は、1 となる。
+    // キューが上限数に達すると、キュー格納数に空きが出るまで、送信側は、Suspend 状態となる。
+    // キューは、すべてのサブスクライバが処理し終えるまで完了とならない。
+    // ただし、サブスクライバが一つも無い場合、キューは、即座に破棄される。
+    // したがって、CoroutineStart.DEFAULT を指定し、即座に送信処理を開始すると、
+    // 受信されずに破棄されるキューが発生する可能性がある。
+    val channel = broadcast<Int>(start = CoroutineStart.DEFAULT) {
+        val log = LoggerFactory.getLogger("sender")
+        log.info("Start")
+        repeat(10) {
+            log.info("Send $it")
+            send(it)
+            delay(100)
+        }
+        log.info("Finish")
+    }
+    println("Start receivers")
+    repeat(2) { times ->
+        println("Start $times")
+        launch {
+            val log = LoggerFactory.getLogger("receiver-$times")
+            log.info("Start")
+            val receiveChannel = channel.openSubscription()
+            delay(100)
+            try {
+                receiveChannel.consumeEach { receivedValue ->
+                    log.info("Receive: $receivedValue")
+                    delay((500..700).random().toLong())
+                    if (receivedValue > (times * 2)) {
+                        receiveChannel.cancel()
+                        return@launch
+                    }
+                }
+            } finally {
+                log.info("Finish")
+            }
+        }
+        println("Finish $times")
+    }
+    println("Finish receivers")
+}
+```
+
+実行結果
+
+```
+Start receivers
+Start 0
+Finish 0
+Start 1
+Finish 1
+Finish receivers
+14:16:58.238 [main @coroutine#2] INFO  sender - Start
+14:16:58.242 [main @coroutine#2] INFO  sender - Send 0
+14:16:58.253 [main @coroutine#3] INFO  receiver-0 - Start
+14:16:58.256 [main @coroutine#4] INFO  receiver-1 - Start
+14:16:58.349 [main @coroutine#2] INFO  sender - Send 1
+14:16:58.357 [main @coroutine#3] INFO  receiver-0 - Receive: 1
+14:16:58.366 [main @coroutine#4] INFO  receiver-1 - Receive: 1
+14:16:58.450 [main @coroutine#2] INFO  sender - Send 2
+14:16:58.551 [main @coroutine#2] INFO  sender - Send 3
+14:16:58.932 [main @coroutine#3] INFO  receiver-0 - Finish
+14:16:59.037 [main @coroutine#4] INFO  receiver-1 - Receive: 2
+14:16:59.139 [main @coroutine#2] INFO  sender - Send 4
+14:16:59.688 [main @coroutine#4] INFO  receiver-1 - Receive: 3
+14:16:59.790 [main @coroutine#2] INFO  sender - Send 5
+14:17:00.369 [main @coroutine#4] INFO  receiver-1 - Finish
+14:17:00.470 [main @coroutine#2] INFO  sender - Send 6
+14:17:00.571 [main @coroutine#2] INFO  sender - Send 7
+14:17:00.674 [main @coroutine#2] INFO  sender - Send 8
+14:17:00.776 [main @coroutine#2] INFO  sender - Send 9
+14:17:00.878 [main @coroutine#2] INFO  sender - Finish
+```
+
 ## パイプライン
 パイプラインとは、1 つの Coroutine が、（おそらく無限に）値をストリームに送信し、
 別の Coroutine が、そのストリームを受信して処理を行うパターンを指す。
@@ -417,6 +497,16 @@ fun main() = runBlocking {
 16:10:36.282 [main @coroutine#2] INFO  sample - Sending 3
 16:10:36.283 [main @coroutine#2] INFO  sample - Sending 4
 ```
+
+### Channel バッファサイズ
+Channel バッファサイズは、次の値を設定できる。
+
+| 値<br />(Int 値) | 説明 |
+| ---- | ---- |
+| Channel.RENDEZVOUS<br />(0) | バッファが 0 なため、受信と送信のタイミングが合致した場合のみ転送される。それまでは、中断される。 |
+| Channel.UNLIMITED<br />(Int.MAX_VALUE) | バッファが無限（物理メモリ量が上限）の LinkedListChannel となる。送信は、常に中断されない。 |
+| Channel.CONFLATED<br />(-1) | バッファが 1 の ConflatedChannel となる。このバッファは、最大 1 つのみバッファし、最後に送信した内容で上書きされる。受信は、常に最新の要素のみで、それ以前の内容は受け取れない。 |
+| 1 以上 Int.MAX_VALUE 未満 | 指定上限サイズの固定容量バッファとなる。送信時にバッファ容量が上限に達しているか、受信時にバッファが空になった場合に、中断する。 |
 
 ## Channel 処理順の公正性
 Channel への送受信は、複数の Coroutine からの呼び出し順に対して公正となる。

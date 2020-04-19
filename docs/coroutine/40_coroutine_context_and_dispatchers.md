@@ -13,6 +13,7 @@
   - [コンテキスト要素の結合](#コンテキスト要素の結合)
   - [Coroutine スコープ](#coroutine-スコープ)
   - [スレッドローカルデータ](#スレッドローカルデータ)
+  - [ThreadContextElement インターフェース](#threadcontextelement-インターフェース)
 
 # コンテキストとディスパッチャ
 Coroutine は、さまざまな値を格納した、```Coroutine コンテキスト```を保持する。
