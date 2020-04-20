@@ -6,11 +6,12 @@
 
 - Coroutine GlobalScope による別スレッドでの処理
 - Coroutine Channel 機能で処理
-- Micronaut のタスク機能をイベント起動で処理
-
-## Coroutine GlobalScope による別スレッドでの処理
-以下の ```globalScope()``` 関数を参照
 
 [非同期レスポンス処理サンプルコード](../../../docs/micronaut/tips/asynchronous_response_processing.md)
 
+## Coroutine GlobalScope による別スレッドでの処理
+非同期レスポンス処理サンプルコードの ```globalScope()``` 関数を参照
+
+## Coroutine Channel 機能で処理
+非同期レスポンス処理サンプルコードの ```asyncSyncJob()``` 関数を参照
 
