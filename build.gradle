@@ -43,6 +43,8 @@ dependencies {
     implementation "io.micronaut:micronaut-validation"
     // バリデーションで、MessageInterpolator を利用する場合に必要
     implementation "io.micronaut.configuration:micronaut-hibernate-validator"
+    // Jackson で XML 変換を利用する場合に必要
+    implementation "io.micronaut.xml:micronaut-jackson-xml"
 
     kapt platform("io.micronaut:micronaut-bom:$micronautVersion")
     // インジェクションを行うために必要
