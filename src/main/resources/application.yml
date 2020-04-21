@@ -24,17 +24,27 @@ micronaut:
             record-stats: true
             test-mode: true
 
+# Jackson の設定（XML 変換も対象となる）
+jackson:
+    # Jackson に Micronaut の Bean Introspection を利用させる設定
+    bean-introspection-module: true
+    serialization:
+        # インデント付きで出力
+        INDENT_OUTPUT: true
+
 # endpoints を利用するには、build.gradle に「implementation "io.micronaut:micronaut-management"」が必要
 endpoints:
     caches:
         enabled: true
         # データ表示に認証が必要かどうか
         sensitive: false
+
 # Retry Advice の設定値
 retry:
     test:
         attempts: "4"
         delay: "200ms"
+
 # スケジュールタスクの設定値
 schedule:
     conf:

@@ -43,6 +43,8 @@ dependencies {
     implementation "io.micronaut:micronaut-validation"
     // バリデーションで、MessageInterpolator を利用する場合に必要
     implementation "io.micronaut.configuration:micronaut-hibernate-validator"
+    // Jackson で XML 変換を利用する場合に必要
+    implementation "io.micronaut.xml:micronaut-jackson-xml"
 
     kapt platform("io.micronaut:micronaut-bom:$micronautVersion")
     // インジェクションを行うために必要
@@ -134,7 +136,7 @@ tasks.withType(JavaExec) {
     classpath += configurations.developmentOnly
     // '-Dkotlinx.coroutines.debug' は、スレッド名に Coroutine 名を追加するなど、Coroutine に関するログ出力を強化する
     jvmArgs('-noverify', '-XX:TieredStopAtLevel=1', '-Dcom.sun.management.jmxremote', '-Dkotlinx.coroutines.debug')
-    environment(["JOB_PROCESS_CAPACITY": 10, "JOB_PROCESS_PARALLENUMBER": 2])
+    environment(["JOB_PROCESS_CAPACITY": 10, "JOB_PROCESS_PARALLEL_NUMBER": 4])
 }
 
 task makeToc {
@@ -147,7 +149,8 @@ task makeToc {
         def mdFiles = fileTree(dir: targetDir, include: "**/*.md")
         mdFiles.each { file ->
             exec {
-                commandLine "intoc", "-input", file, "-edit"
+                // 日本語の見出しは、目次のリンクが機能しない場合があるので、テキストのみとする。
+                commandLine "intoc", "-input", file, "-edit", "-no-linkformat"
             }
         }
     }

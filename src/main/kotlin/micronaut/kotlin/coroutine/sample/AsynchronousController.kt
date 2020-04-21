@@ -8,20 +8,20 @@ import io.micronaut.http.MediaType
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
 import io.micronaut.http.annotation.Produces
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.ObsoleteCoroutinesApi
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.asContextElement
 import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.channels.actor
 import kotlinx.coroutines.channels.consumeEach
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.ensurePresent
 import kotlinx.coroutines.launch
@@ -29,6 +29,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
 import kotlinx.coroutines.withTimeoutOrNull
 import org.slf4j.LoggerFactory
+import java.io.IOException
 import java.time.LocalTime
 import javax.annotation.PostConstruct
 import javax.inject.Singleton
@@ -161,12 +162,12 @@ class AsynchronousController(
     @OptIn(ExperimentalCoroutinesApi::class)
     @Get("/asyncSync")
     @Produces(MediaType.APPLICATION_JSON)
-    @Suppress("TooGenericExceptionCaught")
-    suspend fun asyncSyncJob(async: Boolean?): String = coroutineScope {
-        val requestId = (0..10000).random()
+    @Suppress("TooGenericExceptionCaught", "MaxLineLength")
+    suspend fun asyncSyncJob(async: Boolean?): String {
+        val requestId = (0..20000).random()
         // 非同期呼び出しフラグ
         val asyncFlag = async ?: false
-        log.info("Start asyncSyncJob(async: $asyncFlag)[requestId: $requestId]")
+        log.info("#### Start asyncSyncJob(async: $asyncFlag)[requestId: $requestId]")
 
         val result = if (asyncFlag) {
             // 非同期呼び出しの場合
@@ -185,32 +186,36 @@ class AsynchronousController(
             val syncMessage = SyncProcessMessage(requestId, ProcessInputData(requestId), response)
             // 同期処理依頼実行
             jobProcessManager.sendChannel.send(syncMessage)
-            try {
+            runCatching {
                 // タイムアウト付きで、待機をする
-                withTimeout(2000) {
+                withTimeout(7000) {
                     // 同期処理完了まで、待機し、値を返す
                     response.await().toString()
                 }
-            } catch (e: TimeoutCancellationException) {
-                // タイムアウトが発生した場合
-                log.info("Timeout")
-                "Timeout: ${e.message}"
-            } catch (e: Throwable) {
-                // 処理で例外が発生した場合
-                log.info("Error")
-                e.printStackTrace()
-                e.message ?: "Error"
             }
+                .recover(::commonRecover)
+                .getOrThrow()
         }
 
-        log.info("Finish asyncSyncJob(async: $asyncFlag)[requestId: $requestId]")
-        result
+        log.info("#### Finish asyncSyncJob(async: $asyncFlag)[requestId: $requestId]")
+        return result
+    }
+
+    private fun commonRecover(throwable: Throwable): String = when (throwable) {
+        is TimeoutCancellationException -> {
+            log.info("Timeout")
+            "Timeout: ${throwable.message}"
+        }
+        else -> {
+            log.info("Error: ${throwable.message}")
+            throwable.message ?: "Unknown Error"
+        }
     }
 }
 
 
 // -----------------------------------------------------------------
-// Coroutine で ThreadLocal を利用するサンプル
+// Coroutine で ThreadLocal を利用するサンプル用のコード
 // -----------------------------------------------------------------
 
 
@@ -317,7 +322,7 @@ data class AuthData(
 
 
 // -----------------------------------------------------------------
-// 処理を同期的および、非同期的に実行を切り替える方法および、並行処理数を制御する方法
+// 処理を同期的および、非同期的に実行を切り替える方法および、並行処理数を制御する方法用のコード
 // -----------------------------------------------------------------
 
 /**
@@ -398,7 +403,7 @@ class JobProcessManager(
     /**
      * 処理の並行数。デフォルトは、2
      */
-    @Value("\${job.process.paralleNumber:2}")
+    @Value("\${job.process.parallel-number:2}")
     var parallelNumber: Int = 2
         internal set
 
@@ -429,30 +434,69 @@ class JobProcessManager(
     @OptIn(ObsoleteCoroutinesApi::class)
     fun initialize() {
         log.info("Start initialize")
+
+        // 例外処理ハンドラを生成
+        val exceptionHandler = CoroutineExceptionHandler { coroutineContext, throwable ->
+            // 想定外の例外を処理する
+            // 想定の例外は、かならず発生箇所で処理をする。
+            log.info("CoroutineExceptionHandler: $coroutineContext, ${throwable.message}")
+        }
+
         // 処理依頼送信用 Channel の初期化
         // capacity は、キューの容量
         sendChannel = actor(capacity = capacity) {
-            log.info("Initialize actor [capacity: $capacity]")
+            log.info("Initialize actor [capacity: $capacity, parallelNumber: $parallelNumber]")
             // parallelNumber は、キューの並列処理数
             repeat(parallelNumber) {
-                log.info("Create consumer $it")
+//                log.info("Start actor launch $it")
+                // キュー処理用 Coroutine を生成
                 launch(Dispatchers.IO) {
-                    log.info("Start actor launch $it")
                     consumeEach { message ->
                         // キューを受信した場合
-                        log.info("Receive: $message")
-                        when (message) {
-                            // 非同期処理依頼メッセージの場合
-                            is AsyncProcessMessage -> doAsyncProcessing(message.inputData)
-                            // 同期処理依頼メッセージの場合
-                            is SyncProcessMessage -> doSyncProcessing(message.inputData, message.response)
+                        log.info("Start receive-$it: $message")
+                        // IO スレッドで動作、子 Coroutine がキャンセルされてもこの Coroutine はキャンセルしない、
+                        // 想定外の例外が発生しても、処理を継続するための例外ハンドラを設定
+                        launch(Dispatchers.IO + SupervisorJob() + exceptionHandler) {
+                            when (message) {
+                                // 非同期処理依頼メッセージの場合
+                                is AsyncProcessMessage -> doAsyncProcessing(message.inputData)
+                                // 同期処理依頼メッセージの場合
+                                is SyncProcessMessage -> doSyncProcessing(message.inputData, message.response)
+                            }
                         }
+                            // ここで待機をすることで、キュー処理用 Coroutine の並行数を制限している。
+                            .join()
+                        log.info("Finish receive-$it: $message")
                     }
-                    log.info("Finish actor launch $it")
                 }
+//                log.info("Finish actor launch $it")
             }
         }
         log.info("Finish initialize")
+    }
+
+    /**
+     * 非同期処理
+     *
+     * @param inputData 入力データ
+     */
+    private suspend fun doAsyncProcessing(inputData: ProcessInputData) {
+//        log.info("Start doAsyncProcessing($inputData)")
+        runCatching {
+            // 主要な処理を実行
+            // 処理結果は、返さない
+            val result = jobProcessor.doProcess(inputData)
+
+            // 3 で割り切れる場合に IllegalStateException をスローする
+            throwException(inputData.inputData)
+
+//            log.info("result: $result")
+        }
+            .onFailure {
+                // 例外が発生した場合は、ここで処理をする。
+                it.printStackTrace()
+            }
+//        log.info("Finish doAsyncProcessing($inputData)")
     }
 
     /**
@@ -461,43 +505,32 @@ class JobProcessManager(
      * @param inputData 入力データ
      * @param response 結果返却用
      */
-    @Suppress("TooGenericExceptionCaught")
     private suspend fun doSyncProcessing(
         inputData: ProcessInputData, response: CompletableDeferred<ProcessResultData>) {
         log.info("Start doSyncProcessing($inputData)")
-        try {
+        runCatching {
             // 主要な処理を実行
             val result = jobProcessor.doProcess(inputData)
-            log.info("result: $result")
+//            log.info("result: $result")
+
+            // 3 で割り切れる場合に IllegalStateException をスローする
+            throwException(inputData.inputData)
+
             // 処理結果返信
             response.complete(result)
-        } catch (e: Throwable) {
-            // 例外発生時は、発生した例外を処理依頼元へ返す。
-            response.completeExceptionally(e)
-        } finally {
-            log.info("Finish doSyncProcessing($inputData)")
         }
+            .onFailure {
+                // 例外発生時は、発生した例外を処理依頼元へ返す。
+                response.completeExceptionally(it)
+            }
+        log.info("Finish doSyncProcessing($inputData)")
     }
 
-    /**
-     * 非同期処理
-     *
-     * @param inputData 入力データ
-     */
-    @Suppress("TooGenericExceptionCaught")
-    private suspend fun doAsyncProcessing(inputData: ProcessInputData) {
-        log.info("Start doAsyncProcessing($inputData)")
-        try {
-            // 主要な処理を実行
-            // 処理結果は、返さない
-            val result = jobProcessor.doProcess(inputData)
-            log.info("result: $result")
-        } catch (e: Throwable) {
-            // 例外が発生した場合は、ここで処理をする。
-            e.printStackTrace()
-        } finally {
-            log.info("Finish doAsyncProcessing($inputData)")
-        }
+    private fun throwException(num: Int) {
+//        if (num % 3 == 0) {
+//            log.info("Throw !!!")
+//            throw IllegalStateException("$num % 3 == 0")
+//        }
     }
 }
 
@@ -519,13 +552,37 @@ class JobProcessor(private val processorName: String) {
      * @return 処理結果を返す。
      */
     suspend fun doProcess(inputData: ProcessInputData): ProcessResultData {
-        log.info("Start doProcess($inputData)")
-        // ランダムに待機
-        delay((1000..5000).random().toLong())
-        // 処理結果データを生成
-        val result = ProcessResultData("$processorName, inputData: ${inputData.inputData}")
-        log.info("Finish doProcess($inputData): $result")
-        // 処理結果を返す
-        return result
+        return runCatching {
+//            log.info("Start doProcess($inputData)")
+
+            // ランダムに待機
+            delay((1000..3000).random().toLong())
+
+//            if (inputData.inputData % 5 == 0) {
+//                // 5 で割り切れる場合
+//                throw IOException("doProcess [inputData.inputData % 5 == 0]")
+//            }
+
+            // 処理結果データを生成
+            ProcessResultData("$processorName, inputData: ${inputData.inputData}")
+        }
+            .onSuccess { resultData ->
+                // 正常終了時の処理
+//                log.info("Finish doProcess($inputData): $resultData")
+            }
+            .onFailure { throwable ->
+                // 例外発生時の処理
+//                log.info("onFailure")
+                when (throwable) {
+                    is IOException -> log.info("${throwable.message}")
+                }
+            }
+//            .recover {
+//                // 例外が発生してる場合に、代わりの戻り値を生成できる
+//                log.info("recover")
+//                ProcessResultData(it.message ?: it.javaClass.simpleName)
+//            }
+            // recover 処理で例外が発生していない場合は、値が返る
+            .getOrThrow()
     }
 }

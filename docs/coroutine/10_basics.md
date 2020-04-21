@@ -182,6 +182,9 @@ fun main() {
   現在のスレッドをブロックしないため、即座に ```main``` 関数は終了し、アプリケーションも終了する。  
   したがって、```GlobalScope.launch``` で起動した処理が完了できない。  
   このように、スレッドをブロックする前提の処理との橋渡しのために ```runBlocking``` を利用する。
+  runBlocking<Unit> の総称型指定（Unit）は、main 関数の戻り値が Unit であることを明示するため。
+  指定しない場合で、runBlocking ブロックの最後で Unit 以外の値をもった行があると、
+  型推論で、自動的に戻り値が Unit 以外となりエラーとなるため明示が必要。
   ```kotlin
   fun main() = runBlocking<Unit> { // start main coroutine
       GlobalScope.launch { // launch a new coroutine in background and continue

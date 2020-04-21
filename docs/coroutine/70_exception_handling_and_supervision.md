@@ -23,8 +23,8 @@
 Coroutine ビルダには、 例外を自動的に伝播するもの（launch や actor）および、
 ユーザに公開するもの（async や produce）の 2 つの種類がある。
 例外を自動的に伝播するものは、例外を Java と同様に未処理として扱う。
-ユーザに公開するものは、await や、receive を介して、
-最終的にユーザが例外を処理する必要がある。
+ユーザに公開するものは、最終的に await や、receive の呼び出し時に、
+ユーザが例外を処理する必要がある。
 （produce や、receive は、Channel の章で説明する）
 
 実際の挙動を、GlobalScope の Coroutine で確認する。
