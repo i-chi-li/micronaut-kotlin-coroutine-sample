@@ -198,6 +198,17 @@ fun main() {
 - coroutineScope  
   Suspend 関数。Suspend 関数内で呼び出し可能。
   新しい Coroutine を起動する。現在のスレッドは、ブロックしない。
+  指定された Coroutine ブロックと、その子 Coroutine が、すべて完了するまで、中断する。
+  Coroutine ブロックや、子 Coroutine が、キャンセルされると、
+  このスコープや、他のすべての子 Coroutine や、親スコープもキャンセルされる。
+- supervisorScope  
+  Suspend 関数。Suspend 関数内で呼び出し可能。
+  新しい Coroutine を起動する。現在のスレッドは、ブロックしない。
+  親スコープから、Coroutine コンテキストを継承するが、
+  ジョブを SupervisorJob で上書きする。
+  子 Coroutine のキャンセルは、このスコープおよび、他の子 Coroutine には影響しない。
+  このスコープのキャンセルは、すべての子 Coroutine をキャンセルするが、
+  親スコープは、キャンセルしない。
 - flow  
   通常関数。どこでも呼び出し可能。現在のスレッドは、ブロックしない。
   値の取得時点で処理を開始し、取得の度に値生成処理が実行されるストリーム処理を行う。
@@ -211,7 +222,12 @@ fun main() {
 - withTimeoutOrNull  
   withTimeout と同様。
   ただし、タイムアウトになると、戻り値に null が返る。
-  
+- withContext  
+  withContextは、現在の Coroutine を切り替えることなく、
+  Coroutine コンテキストのみを切り替えることができる。
+  したがって、withContext(Dispatchers.IO) {...} のように、
+  ディスパッチャを指定しても、スレッドは切り替わらない。
+  withContext は、新たに Coroutine を生成しないため、Coroutine ビルダではない。
 
 ### ディスパッチャ
 ```ディスパッチャ```は、生成する Coroutine 処理の実行スレッドを規定する。
@@ -219,6 +235,7 @@ fun main() {
 - Dispatchers.Default  
   JVM 共通バックグラウンドスレッドプールのスレッドで実行される。
   スレッドプールの最大数は、最低 2 個で、CPU プロセッサ数と同数となる。
+  それ以上のスレッドが必要になった場合、スレッドが空くまで待機となる。
 - Dispatchers.Main  
   main スレッドで実行される。
 - Dispatchers.IO  
@@ -226,8 +243,7 @@ fun main() {
   スレッドプール待ちでブロックされずに実行できる。
   JVM 共通バックグラウンドスレッドプールにスレッドが追加され、そのスレッドで実行する。
   追加したスレッドは、必要に応じて開放もされる。
-  スレッド数の上限は、64 または、CPU プロセス数のどちらか大きい方となる。
-  withContext(Dispatchers.IO) {...} としても、スレッドは切り替わらない。
+  スレッド数の上限は、64 または、CPU プロセッサ数のどちらか大きい方となる。
 - Dispatchers.Unconfined  
   特殊なディスパッチャ。基本的に利用しないこと。
   最初の Suspend 関数までは、呼び出し元のスレッドで実行され、
