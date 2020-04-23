@@ -20,7 +20,7 @@ import java.time.ZonedDateTime
 import kotlin.coroutines.CoroutineContext
 
 @Controller("/coroutine")
-abstract class CoroutineController {
+class CoroutineController {
     @Get("/")
     @Produces(CustomMediaType.TEXT_PLAIN_UTF8)
     // メソッドを Coroutine 対応にするため、suspend 関数にできる

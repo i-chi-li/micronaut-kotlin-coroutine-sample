@@ -30,7 +30,11 @@ jackson:
     bean-introspection-module: true
     serialization:
         # インデント付きで出力
-        INDENT_OUTPUT: true
+        indentOutput: true
+        writeDatesAsTimestamps: false
+    deserialization:
+        useBigIntegerForInts: true
+        failOnUnknownProperties: false
 
 # endpoints を利用するには、build.gradle に「implementation "io.micronaut:micronaut-management"」が必要
 endpoints:
