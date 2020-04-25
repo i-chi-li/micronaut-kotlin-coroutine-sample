@@ -1,3 +1,11 @@
+<!-- toc -->
+- 総称型(Generics)
+  - 総称型の定義方法
+    - 原型(row type)
+    - 型パラメータ(type parameter)
+  - 変性
+    - 非変（invariant）
+
 # 総称型(Generics)
 総称型を大雑把に説明する。
 

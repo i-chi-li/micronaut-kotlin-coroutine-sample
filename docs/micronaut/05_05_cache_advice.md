@@ -1,3 +1,8 @@
+<!-- toc -->
+- Cache Advice
+  - キャッシュ名定義
+  - アノテーション一覧
+
 # Cache Advice
 Cache Advice は、メソッドにキャッシュ機能を付与するためのアノテーション。
 デフォルトのバックエンドは、Caffeine となる。

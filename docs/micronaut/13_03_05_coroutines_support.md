@@ -1,3 +1,9 @@
+<!-- toc -->
+- Coroutines Support
+  - 制限事項
+    - @RequestScope での制約
+    - 関数の戻り値での制約
+
 # Coroutines Support
 Micronaut では、Kotlin Coroutine をサポートする。
 サポートする機能は、以下となる。

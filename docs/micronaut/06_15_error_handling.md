@@ -1,3 +1,6 @@
+<!-- toc -->
+- Error Handling
+
 # Error Handling
 Micronaut では、エラーのハンドリング処理を個別に定義できる。  
 エラーハンドラは、未処理例外および、HTTP レスポンスステータスコードに対して定義できる。  

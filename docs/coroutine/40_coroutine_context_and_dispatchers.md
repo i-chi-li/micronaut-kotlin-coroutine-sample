@@ -1,19 +1,19 @@
 <!-- toc -->
-- [コンテキストとディスパッチャ](#コンテキストとディスパッチャ)
-    - [ディスパッチャが未指定の場合](#ディスパッチャが未指定の場合)
-    - [Dispatchers.Unconfined を指定した場合](#dispatchersunconfined-を指定した場合)
-    - [Dispatchers.Default を指定した場合](#dispatchersdefault-を指定した場合)
-    - [newSingleThreadContext を指定した場合](#newsinglethreadcontext-を指定した場合)
-  - [Coroutine とスレッドのデバッグ](#coroutine-とスレッドのデバッグ)
-  - [スレッド間の往来](#スレッド間の往来)
-  - [コンテキストに格納されているジョブ](#コンテキストに格納されているジョブ)
-  - [Coroutine の子階層](#coroutine-の子階層)
-  - [親 Coroutine の責務](#親-coroutine-の責務)
-  - [デバッグ用に Coroutine を命名](#デバッグ用に-coroutine-を命名)
-  - [コンテキスト要素の結合](#コンテキスト要素の結合)
-  - [Coroutine スコープ](#coroutine-スコープ)
-  - [スレッドローカルデータ](#スレッドローカルデータ)
-  - [ThreadContextElement インターフェース](#threadcontextelement-インターフェース)
+- コンテキストとディスパッチャ
+    - ディスパッチャが未指定の場合
+    - Dispatchers.Unconfined を指定した場合
+    - Dispatchers.Default を指定した場合
+    - newSingleThreadContext を指定した場合
+  - Coroutine とスレッドのデバッグ
+  - スレッド間の往来
+  - コンテキストに格納されているジョブ
+  - Coroutine の子階層
+  - 親 Coroutine の責務
+  - デバッグ用に Coroutine を命名
+  - コンテキスト要素の結合
+  - Coroutine スコープ
+  - スレッドローカルデータ
+  - ThreadContextElement インターフェース
 
 # コンテキストとディスパッチャ
 Coroutine は、さまざまな値を格納した、```Coroutine コンテキスト```を保持する。

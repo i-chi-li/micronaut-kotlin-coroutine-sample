@@ -1,3 +1,11 @@
+<!-- toc -->
+- Retry Advice
+  - 制限事項
+  - @Retryable
+  - @CircuitBreaker
+  - Bean Creation Retry
+  - Retry Events
+
 # Retry Advice
 
 [サンプルコード](../../src/test/kotlin/micronaut/kotlin/coroutine/sample/micronaut/RetryTest.kt)

@@ -1,14 +1,14 @@
 <!-- toc -->
-- [例外処理と監視](#例外処理と監視)
-  - [例外処理](#例外処理)
-    - [例外の伝播](#例外の伝播)
-    - [Coroutine 例外ハンドラ](#coroutine-例外ハンドラ)
-    - [キャンセル処理と例外](#キャンセル処理と例外)
-    - [例外の集約](#例外の集約)
-  - [監視](#監視)
-    - [SupervisorJob](#supervisorjob)
-    - [supervisorScope](#supervisorscope)
-    - [監視 Coroutine での例外](#監視-coroutine-での例外)
+- 例外処理と監視
+  - 例外処理
+    - 例外の伝播
+    - Coroutine 例外ハンドラ
+    - キャンセル処理と例外
+    - 例外の集約
+  - 監視
+    - SupervisorJob
+    - supervisorScope
+    - 監視 Coroutine での例外
 
 # 例外処理と監視
 
