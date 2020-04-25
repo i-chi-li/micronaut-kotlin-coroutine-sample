@@ -1,18 +1,18 @@
 <!-- toc -->
-- [kotlin-coroutines-test モジュール](#kotlin-coroutines-test-モジュール)
-  - [Dispatchers.Main の委譲](#dispatchersmain-の委譲)
-  - [runBlockingTest ビルダについて](#runblockingtest-ビルダについて)
-    - [通常 Suspend 関数のテスト](#通常-suspend-関数のテスト)
-    - [launch および、async 処理のテスト](#launch-およびasync-処理のテスト)
-    - [delay 関数を使う launch または、async 処理のテスト](#delay-関数を使う-launch-またはasync-処理のテスト)
-    - [runBlockingTest ビルダを利用した withTimeout 処理のテスト](#runblockingtest-ビルダを利用した-withtimeout-処理のテスト)
-    - [pauseDispatcher ビルダおよび、resumeDispatcher ビルダ](#pausedispatcher-ビルダおよびresumedispatcher-ビルダ)
-  - [構造化された並行性とテストの統合](#構造化された並行性とテストの統合)
-    - [runBlockingTest が提供する TestCoroutineScope](#runblockingtest-が提供する-testcoroutinescope)
-    - [明示的な TestCoroutineScope の提供](#明示的な-testcoroutinescope-の提供)
-    - [明示的な TestCoroutineDispatcher の提供](#明示的な-testcoroutinedispatcher-の提供)
-    - [runBlockingTest 不使用時の、TestCoroutineScope および TestCoroutineDispatcher でのテスト](#runblockingtest-不使用時のtestcoroutinescope-および-testcoroutinedispatcher-でのテスト)
-  - [withContext で時間制御](#withcontext-で時間制御)
+- kotlin-coroutines-test モジュール
+  - Dispatchers.Main の委譲
+  - runBlockingTest ビルダについて
+    - 通常 Suspend 関数のテスト
+    - launch および、async 処理のテスト
+    - delay 関数を使う launch または、async 処理のテスト
+    - runBlockingTest ビルダを利用した withTimeout 処理のテスト
+    - pauseDispatcher ビルダおよび、resumeDispatcher ビルダ
+  - 構造化された並行性とテストの統合
+    - runBlockingTest が提供する TestCoroutineScope
+    - 明示的な TestCoroutineScope の提供
+    - 明示的な TestCoroutineDispatcher の提供
+    - runBlockingTest 不使用時の、TestCoroutineScope および TestCoroutineDispatcher でのテスト
+  - withContext で時間制御
 
 # kotlin-coroutines-test モジュール
 Coroutine のテストユーティリティ。

@@ -1,38 +1,38 @@
 <!-- toc -->
-- [非同期 Flow 処理](#非同期-flow-処理)
-  - [複数値の表現](#複数値の表現)
-  - [シーケンス](#シーケンス)
-  - [Suspend 関数](#suspend-関数)
-  - [Flow 処理](#flow-処理)
-  - [Flow はコールド](#flow-はコールド)
-  - [Flow 終端オペレータ](#flow-終端オペレータ)
-  - [Flow 処理の直列性](#flow-処理の直列性)
-  - [Flow のコンテキスト](#flow-のコンテキスト)
-  - [withContext ビルダを利用した間違った送出](#withcontext-ビルダを利用した間違った送出)
-  - [flowOn オペレータ](#flowon-オペレータ)
-  - [buffer オペレータ](#buffer-オペレータ)
-  - [conflate オペレータ](#conflate-オペレータ)
-  - [collectLatest オペレータ](#collectlatest-オペレータ)
-  - [Flow の複数組合せ](#flow-の複数組合せ)
-    - [zip オペレータ](#zip-オペレータ)
-    - [combine オペレータ](#combine-オペレータ)
-  - [Flow の平坦化](#flow-の平坦化)
-    - [flatMapConcat オペレータ](#flatmapconcat-オペレータ)
-    - [flatMapMerge オペレータ](#flatmapmerge-オペレータ)
-    - [flatMapLatest オペレータ](#flatmaplatest-オペレータ)
-  - [Flow 例外](#flow-例外)
-    - [collect を try-cache](#collect-を-try-cache)
-    - [すべてキャッチされる](#すべてキャッチされる)
-  - [例外の透過性](#例外の透過性)
-    - [透過的な cache オペレータ](#透過的な-cache-オペレータ)
-    - [宣言的な cache オペレータ](#宣言的な-cache-オペレータ)
-  - [Flow の完了](#flow-の完了)
-    - [命令型の finally ブロック](#命令型の-finally-ブロック)
-    - [宣言型の制御](#宣言型の制御)
-    - [上流の例外のみ](#上流の例外のみ)
-  - [命令型と宣言型](#命令型と宣言型)
-  - [Flow 処理の実行](#flow-処理の実行)
-  - [Flow とリアクティブストリーム](#flow-とリアクティブストリーム)
+- 非同期 Flow 処理
+  - 複数値の表現
+  - シーケンス
+  - Suspend 関数
+  - Flow 処理
+  - Flow はコールド
+  - Flow 終端オペレータ
+  - Flow 処理の直列性
+  - Flow のコンテキスト
+  - withContext ビルダを利用した間違った送出
+  - flowOn オペレータ
+  - buffer オペレータ
+  - conflate オペレータ
+  - collectLatest オペレータ
+  - Flow の複数組合せ
+    - zip オペレータ
+    - combine オペレータ
+  - Flow の平坦化
+    - flatMapConcat オペレータ
+    - flatMapMerge オペレータ
+    - flatMapLatest オペレータ
+  - Flow 例外
+    - collect を try-cache
+    - すべてキャッチされる
+  - 例外の透過性
+    - 透過的な cache オペレータ
+    - 宣言的な cache オペレータ
+  - Flow の完了
+    - 命令型の finally ブロック
+    - 宣言型の制御
+    - 上流の例外のみ
+  - 命令型と宣言型
+  - Flow 処理の実行
+  - Flow とリアクティブストリーム
 
 # 非同期 Flow 処理
 非同期の Suspend 関数は、単一の値を返すことしかできない。

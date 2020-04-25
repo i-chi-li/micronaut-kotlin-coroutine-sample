@@ -1,17 +1,17 @@
 <!-- toc -->
-- [Coroutine の基礎](#coroutine-の基礎)
-  - [Coroutine ライブラリについて](#coroutine-ライブラリについて)
-  - [Coroutine の構成要素](#coroutine-の構成要素)
-    - [Coroutine スコープ](#coroutine-スコープ)
-    - [ディスパッチャ](#ディスパッチャ)
-    - [Suspend 関数](#suspend-関数)
-  - [処理完了待ち](#処理完了待ち)
-    - [join 関数](#join-関数)
-    - [構造化された並行性(Structured concurrency)](#構造化された並行性structured-concurrency)
-    - [coroutineScope ビルダ](#coroutinescope-ビルダ)
-  - [軽量な Coroutine](#軽量な-coroutine)
-  - [デーモンスレッドのような Global スコープの Coroutine](#デーモンスレッドのような-global-スコープの-coroutine)
-- [Thread と Coroutine の違い](#thread-と-coroutine-の違い)
+- Coroutine の基礎
+  - Coroutine ライブラリについて
+  - Coroutine の構成要素
+    - Coroutine スコープ
+    - ディスパッチャ
+    - Suspend 関数
+  - 処理完了待ち
+    - join 関数
+    - 構造化された並行性(Structured concurrency)
+    - coroutineScope ビルダ
+  - 軽量な Coroutine
+  - デーモンスレッドのような Global スコープの Coroutine
+- Thread と Coroutine の違い
 
 # Coroutine の基礎
 

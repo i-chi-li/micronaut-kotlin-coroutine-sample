@@ -1,17 +1,17 @@
 <!-- toc -->
-- [はじめに](#はじめに)
-  - [概要](#概要)
-  - [用語説明](#用語説明)
-    - [継続渡しスタイル（Continuation Passing Style : CPS）](#継続渡しスタイルcontinuation-passing-style--cps)
-    - [Suspend 関数](#suspend-関数)
-    - [非ブロッキング処理](#非ブロッキング処理)
-  - [Suspend 関数に対するコンパイラの処理](#suspend-関数に対するコンパイラの処理)
-    - [Suspend 関数の変形](#suspend-関数の変形)
-    - [状態クラス](#状態クラス)
-    - [Suspend 関数処理の流れ](#suspend-関数処理の流れ)
-  - [非同期関数をラップして独自の Suspend 関数を作成する方法](#非同期関数をラップして独自の-suspend-関数を作成する方法)
-  - [参考文献](#参考文献)
-  - [参考サイト](#参考サイト)
+- はじめに
+  - 概要
+  - 用語説明
+    - 継続渡しスタイル（Continuation Passing Style : CPS）
+    - Suspend 関数
+    - 非ブロッキング処理
+  - Suspend 関数に対するコンパイラの処理
+    - Suspend 関数の変形
+    - 状態クラス
+    - Suspend 関数処理の流れ
+  - 非同期関数をラップして独自の Suspend 関数を作成する方法
+  - 参考文献
+  - 参考サイト
 
 # はじめに
 この章では、Coroutine の主たる機能である、Suspend 関数の動作原理について記載する。

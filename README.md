@@ -53,6 +53,7 @@ Micronaut フレームワークで、Kotlin Coroutine を利用するサンプ�
         - [Scheduled Tasks](docs/micronaut/05_07_scheduled_tasks.md)
     - The Http Server
         - [Error Handling](docs/micronaut/06_15_error_handling.md)
+        - [HTTP セッション](docs/micronaut/06_22_http_sessions.md)
     - Tips
         - [非同期レスポンス処理](docs/micronaut/tips/asynchronous_response_processing.md)
 

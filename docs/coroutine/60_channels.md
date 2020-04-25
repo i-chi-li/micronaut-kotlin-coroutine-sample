@@ -1,15 +1,17 @@
 <!-- toc -->
-- [Channel](#channel)
-  - [Channel の基礎](#channel-の基礎)
-  - [Channel のクローズと受信処理の終了](#channel-のクローズと受信処理の終了)
-  - [Channel プロデューサの構築](#channel-プロデューサの構築)
-  - [パイプライン](#パイプライン)
-  - [Pipeline での素数生成](#pipeline-での素数生成)
-  - [ファンアウト（Fan-out）](#ファンアウトfan-out)
-  - [ファンイン（Fan-in）](#ファンインfan-in)
-  - [Channel バッファ](#channel-バッファ)
-  - [Channel 処理順の公正性](#channel-処理順の公正性)
-  - [ticker Channel](#ticker-channel)
+- Channel
+  - Channel の基礎
+  - Channel のクローズと受信処理の終了
+  - Channel プロデューサの構築
+    - Channel プロデューサのサンプルコード
+  - パイプライン
+  - Pipeline での素数生成
+  - ファンアウト（Fan-out）
+  - ファンイン（Fan-in）
+  - Channel バッファ
+    - Channel バッファサイズ
+  - Channel 処理順の公正性
+  - ticker Channel
 
 # Channel
 遅延値は、Coroutine 間で単一の値を転送する便利な方法を提供する。

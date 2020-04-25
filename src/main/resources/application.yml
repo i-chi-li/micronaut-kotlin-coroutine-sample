@@ -11,10 +11,10 @@ micronaut:
             maximumSize: 5
             # 登録の最大の重み
             maximum-weight: 100
-            # 書き込み後のキャッシュの有効期限
-            expire-after-write: 0
+            # 書き込み後のキャッシュの有効期限（書式はここを参照 [https://docs.oracle.com/javase/jp/8/docs/api/java/time/Duration.html#parse-java.lang.CharSequence-]）
+            expire-after-write: "PT15M"
             # アクセス後のキャッシュの有効期限
-            expire-after-access: "1ms"
+            expire-after-access: "PT15M"
             # レコード統計を有効化
             record-stats: true
             # テストモードを有効化

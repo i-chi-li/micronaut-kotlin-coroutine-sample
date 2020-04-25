@@ -1,8 +1,8 @@
 <!-- toc -->
-- [select ビルダ（実験的）](#select-ビルダ実験的)
-  - [select ビルダで Channel を選択](#select-ビルダで-channel-を選択)
-  - [select ビルダで Channel クローズ時の処理](#select-ビルダで-channel-クローズ時の処理)
-  - [selectUnbiased ビルダ](#selectunbiased-ビルダ)
+- select ビルダ（実験的）
+  - select ビルダで Channel を選択
+  - select ビルダで Channel クローズ時の処理
+  - selectUnbiased ビルダ
 
 # select ビルダ（実験的）
 select ビルダを利用すると、複数の suspend 関数を同時に待機して、

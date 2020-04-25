@@ -1,3 +1,6 @@
+<!-- toc -->
+- Introduction Advice
+
 # Introduction Advice
 Introduction Advice は、メソッドの実装を提供する機能。
 インターフェースをインジェクションした場合などに、
