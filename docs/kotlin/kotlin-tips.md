@@ -9,6 +9,19 @@
 
 # Kotlin Tips
 
+## よく見る記法
+- `!`
+  - [Calling Java code from Kotlin](https://kotlinlang.org/docs/reference/java-interop.html)
+- `!!`、`?.`、`?:`
+  - [Kotlin - Null Safety](https://kotlinlang.org/docs/reference/null-safety.html)
+- `is`、`as`、`as?`
+  - [Type Checks and Casts: 'is' and 'as'](https://kotlinlang.org/docs/reference/typecasts.html)
+- `in`
+  - [Basic Syntax](https://kotlinlang.org/docs/reference/basic-syntax.html)
+- `<in T>`、`<out T>`
+  - [Generics](https://kotlinlang.org/docs/reference/generics.html)  
+  - [総称型(Generics)](generics.md)
+
 ## 入れ子の Lambda ブロック内から、親の this を利用する方法
 Lambda ブロックを入れ子にする処理などで、ブロックの親の this を利用したい場合がある。
 その場合、「this@xxxx」のように記述する。
