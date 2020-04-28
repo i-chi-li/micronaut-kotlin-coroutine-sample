@@ -1,5 +1,5 @@
 <!-- toc -->
-- HTTP セッション
+- [HTTP セッション](https://docs.micronaut.io/latest/guide/index.html#sessions)
   - セッションの有効化
     - Redis セッション
   - セッションの特定方法を設定
@@ -8,7 +8,7 @@
   - @SessionValue の利用
   - セッションイベント
 
-# HTTP セッション
+# [HTTP セッション](https://docs.micronaut.io/latest/guide/index.html#sessions)
 デフォルトでは、Micronaut は、ステートレス HTTP サーバである。
 しかし、アプリケーションの要件によっては、HTTP セッションの概念が必要となる。
 

@@ -54,8 +54,14 @@ Micronaut フレームワークで、Kotlin Coroutine を利用するサンプ�
     - The Http Server
         - [Error Handling](docs/micronaut/06_15_error_handling.md)
         - [HTTP セッション](docs/micronaut/06_22_http_sessions.md)
+    - Language Support
+        - [Kotlin and AOP Advice](docs/micronaut/13_03_03_kotlin_and_aop_advice.md)
+        - [Coroutines Support](docs/micronaut/13_03_05_coroutines_support.md)
+    - [Security](docs/micronaut/15_00_security.md)
+        - [Micronaut Security](docs/micronaut/15_01_micronaut_security.md)
     - Tips
         - [非同期レスポンス処理](docs/micronaut/tips/asynchronous_response_processing.md)
+        - [認証方式](docs/micronaut/tips/authentication.md)
 
 ---
 

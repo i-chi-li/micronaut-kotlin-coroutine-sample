@@ -1,5 +1,5 @@
 <!-- toc -->
-- Bean Introspection
+- [Bean Introspection](https://docs.micronaut.io/latest/guide/index.html#introspection)
   - @Introspected アノテーション
   - BeanIntrospection API
   - 複数コンストラクタ
@@ -10,7 +10,7 @@
   - BeanWrapper API
   - Jackson と Bean Introspection
 
-# Bean Introspection
+# [Bean Introspection](https://docs.micronaut.io/latest/guide/index.html#introspection)
 Bean Introspection とは、リフレクションを利用せず、
 Bean をインスタンス化したり、プロパティを取得したりするための機能となる。
 

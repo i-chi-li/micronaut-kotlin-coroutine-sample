@@ -1,5 +1,6 @@
 <!-- toc -->
 - Kotlin Tips
+  - よく見る記法
   - 入れ子の Lambda ブロック内から、親の this を利用する方法
   - KotlinのListとSequenceって何が違うの？
   - Sequenceオブジェクト生成方法

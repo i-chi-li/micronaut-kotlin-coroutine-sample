@@ -1,10 +1,10 @@
 <!-- toc -->
-- Coroutines Support
+- [Coroutines Support](https://docs.micronaut.io/latest/guide/index.html#coroutines)
   - 制限事項
     - @RequestScope での制約
     - 関数の戻り値での制約
 
-# Coroutines Support
+# [Coroutines Support](https://docs.micronaut.io/latest/guide/index.html#coroutines)
 Micronaut では、Kotlin Coroutine をサポートする。
 サポートする機能は、以下となる。
 

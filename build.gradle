@@ -45,12 +45,23 @@ dependencies {
     implementation "io.micronaut.configuration:micronaut-hibernate-validator"
     // Jackson で XML 変換を利用する場合に必要
     implementation "io.micronaut.xml:micronaut-jackson-xml"
+    // Security モジュールを利用する場合に必要
+    implementation "io.micronaut:micronaut-security"
+    // Session モジュールを利用する場合に必要（インメモリ版）
+    //implementation "io.micronaut:micronaut-session"
+    // Security モジュールで、Session モジュールを利用する場合に必要
+    //implementation "io.micronaut:micronaut-security-session"
+
+    // Time-based One-time Password (TOTP) を扱うライブラリ
+    implementation "com.warrenstrange:googleauth:1.4.0"
 
     kapt platform("io.micronaut:micronaut-bom:$micronautVersion")
     // インジェクションを行うために必要
     kapt "io.micronaut:micronaut-inject-java"
     // コンパイル時にアノテーションをバリデーションするために必要
     kapt "io.micronaut:micronaut-validation"
+    // Security モジュールを利用する場合に必要
+    kapt "io.micronaut:micronaut-security"
 
     kaptTest platform("io.micronaut:micronaut-bom:$micronautVersion")
     kaptTest "io.micronaut:micronaut-inject-java"

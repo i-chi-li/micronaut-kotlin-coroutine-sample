@@ -1,5 +1,5 @@
 <!-- toc -->
-- Validation Advice
+- [Validation Advice](https://docs.micronaut.io/latest/guide/index.html#validation)
   - 依存ライブラリ
   - 制限事項
     - 基本機能の制限事項
@@ -7,7 +7,7 @@
   - 標準バリデーション・アノテーション
   - 多言語対応
 
-# Validation Advice
+# [Validation Advice](https://docs.micronaut.io/latest/guide/index.html#validation)
 Validation Advice は、付与することでバリデーション機能が有効となる。
 Validation Advice は、JSR 380 規格で作成されている。
 JSR 380 は、Bean バリデーション用の Java API 仕様であり、

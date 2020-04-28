@@ -1,7 +1,7 @@
 <!-- toc -->
-- Method Adapter Advice
+- [Method Adapter Advice](https://docs.micronaut.io/latest/guide/index.html#adapterAdvice)
 
-# Method Adapter Advice
+# [Method Adapter Advice](https://docs.micronaut.io/latest/guide/index.html#adapterAdvice)
 Method Adapter Advice とは、付与することにより、
 任意の機能を持ったクラスを自動生成するための機能となる。
 

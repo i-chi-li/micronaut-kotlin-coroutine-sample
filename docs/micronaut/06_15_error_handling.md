@@ -1,7 +1,7 @@
 <!-- toc -->
-- Error Handling
+- [Error Handling](https://docs.micronaut.io/latest/guide/index.html#errorHandling)
 
-# Error Handling
+# [Error Handling](https://docs.micronaut.io/latest/guide/index.html#errorHandling)
 Micronaut では、エラーのハンドリング処理を個別に定義できる。  
 エラーハンドラは、未処理例外および、HTTP レスポンスステータスコードに対して定義できる。  
 エラーハンドラの適用範囲は、グローバルおよび、ローカルを選択できる。  

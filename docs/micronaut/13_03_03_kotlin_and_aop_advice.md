@@ -1,7 +1,7 @@
 <!-- toc -->
-- Kotlin and AOP Advice
+- [Kotlin and AOP Advice](https://docs.micronaut.io/latest/guide/index.html#openandaop)
 
-# Kotlin and AOP Advice
+# [Kotlin and AOP Advice](https://docs.micronaut.io/latest/guide/index.html#openandaop)
 Micronaut は、リフレクションを利用せず、コンパイル時の AOP API を提供する。
 Micronaut の AOP アドバイスを利用すると、
 コンパイル時に AOP 機能を持ったサブクラスを生成する。

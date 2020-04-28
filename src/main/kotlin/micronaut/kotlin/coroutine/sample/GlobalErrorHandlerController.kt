@@ -10,8 +10,11 @@ import io.micronaut.http.annotation.Get
 import io.micronaut.http.annotation.Produces
 import io.micronaut.http.hateoas.JsonError
 import io.micronaut.http.hateoas.Link
+import io.micronaut.http.server.exceptions.ExceptionHandler
+import io.micronaut.security.authentication.AuthorizationException
 import org.slf4j.LoggerFactory
 import java.sql.SQLException
+import javax.inject.Singleton
 
 @Controller("/handler")
 class GlobalErrorHandlerController {
@@ -22,18 +25,52 @@ class GlobalErrorHandlerController {
      * 未処理例外が発生した場合に処理をする。
      * 任意の例外のみを処理することもできる。
      *
+     * Throwable で、すべての例外を処理してしまうと、
+     * AuthorizationException も処理対象となってしまい、
+     * デフォルトの認証関連処理が行われなくなる。
+     *
+     * この関数内で、例外をスローすると、再びこの関数が呼び出され、ループするので注意。
+     *
      * ハンドラは、グローバルであっても、必ず Controller クラス内に定義する必要がある。
      *
      * @param request HTTP リクエスト
      * @param e 例外
      * @return HTTP レスポンスを返す。
      */
-    @Error(global = true)
+//    @Error(global = true)
     fun globalErrorHandler(request: HttpRequest<*>, e: Throwable): HttpResponse<JsonError> {
-        log.info("Start globalErrorHandler()", e)
-        val error = JsonError("Exception Error Handler: ${e.message}")
+        log.info("Start globalErrorHandler(): ${e.javaClass.simpleName}")
+        val error = JsonError("Global Exception Error Handler: [${e.javaClass.simpleName}] message: ${e.message ?: ""}")
             .link(Link.SELF, Link.of(request.uri))
         return HttpResponse.serverError<JsonError>()
+            .body(error)
+    }
+
+    /**
+     * グローバル未認証例外ハンドラ
+     *
+     * 未認証アクセス時の、統一したレスポンスを定義できる。
+     *
+     * @param request HTTP リクエスト
+     * @param e 例外
+     * @return HTTP レスポンスを返す。
+     */
+//    @Error(global = true, exception = AuthorizationException::class)
+    fun globalAuthorizationExceptionHandler(
+        request: HttpRequest<*>,
+        e: AuthorizationException
+    ): HttpResponse<JsonError>? {
+        log.info("Start globalAuthorizationExceptionHandler(): ${e.javaClass.simpleName}")
+
+        // 未認証アクセス時に、ログイン画面へ遷移させる。
+//        return HttpResponse.seeOther(URI("/login"))
+
+        // 未認証アクセス時に、エラーレスポンスを返す。
+        val error = JsonError(
+            "Global AuthorizationException Handler: [${e.javaClass.simpleName}] message: ${e.message ?: ""}"
+        )
+            .link(Link.SELF, Link.of(request.uri))
+        return HttpResponse.unauthorized<JsonError>()
             .body(error)
     }
 
@@ -73,5 +110,14 @@ class GlobalErrorHandlerController {
     @Produces(MediaType.APPLICATION_JSON)
     fun status(): HttpResponse<String> {
         return HttpResponse.serverError("Response Server Error")
+    }
+}
+
+@Singleton
+class CustomThrowableErrorHandler : ExceptionHandler<Throwable, HttpResponse<*>> {
+    private val log = LoggerFactory.getLogger(this.javaClass)
+    override fun handle(request: HttpRequest<*>, exception: Throwable): HttpResponse<*> {
+        log.error("Throwable handler [${exception.message}]", exception)
+        return HttpResponse.badRequest("Error: ${exception.message}")
     }
 }

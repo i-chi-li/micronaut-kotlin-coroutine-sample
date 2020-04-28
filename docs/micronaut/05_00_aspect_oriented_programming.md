@@ -1,7 +1,7 @@
 <!-- toc -->
-- アスペクト指向プログラミング
+- [アスペクト指向プログラミング](https://docs.micronaut.io/latest/guide/index.html#aop)
 
-# アスペクト指向プログラミング
+# [アスペクト指向プログラミング](https://docs.micronaut.io/latest/guide/index.html#aop)
 アスペクト指向プログラミングとは、個別の処理とは別に、
 横断的な関心事（ロギング、トランザクション、トレース、認証など）に対する、
 処理を定義する方法となる。

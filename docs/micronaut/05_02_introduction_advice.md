@@ -1,7 +1,7 @@
 <!-- toc -->
-- Introduction Advice
+- [Introduction Advice](https://docs.micronaut.io/latest/guide/index.html#introductionAdvice)
 
-# Introduction Advice
+# [Introduction Advice](https://docs.micronaut.io/latest/guide/index.html#introductionAdvice)
 Introduction Advice は、メソッドの実装を提供する機能。
 インターフェースをインジェクションした場合などに、
 実装クラスがなくても、値を返すなどができる。

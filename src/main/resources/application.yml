@@ -1,4 +1,32 @@
 micronaut:
+    security:
+        # セキュリティ機能を有効化
+        enabled: true
+        token:
+            basic-auth:
+                # Basic 認証用の処理を無効にする（デフォルトで有効となっている）
+                enabled: false
+        intercept-url-map:
+            -   pattern: /favicon.ico
+                http-method: GET
+                access:
+                    - isAnonymous()
+            -   pattern: /auth/**
+                access:
+                    - isAuthenticated()
+                    # カスタムロールを指定できる
+                    - CUSTOM_ROLE_1
+            -   pattern: /totp/**
+                access:
+                    - isAuthenticated()
+#        endpoints:
+#            login:
+#                enabled: true
+#                path: /login
+#            logout:
+#                enabled: true
+#                path: /logout
+
     application:
         name: micronaut-kotlin-coroutine-sample
     caches:

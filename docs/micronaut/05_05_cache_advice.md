@@ -1,9 +1,9 @@
 <!-- toc -->
-- Cache Advice
+- [Cache Advice](https://docs.micronaut.io/latest/guide/index.html#caching)
   - キャッシュ名定義
   - アノテーション一覧
 
-# Cache Advice
+# [Cache Advice](https://docs.micronaut.io/latest/guide/index.html#caching)
 Cache Advice は、メソッドにキャッシュ機能を付与するためのアノテーション。
 デフォルトのバックエンドは、Caffeine となる。
 
