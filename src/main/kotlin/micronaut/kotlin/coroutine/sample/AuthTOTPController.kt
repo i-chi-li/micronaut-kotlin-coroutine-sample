@@ -5,7 +5,6 @@ package micronaut.kotlin.coroutine.sample
 import com.warrenstrange.googleauth.GoogleAuthenticator
 import com.warrenstrange.googleauth.ICredentialRepository
 import io.micronaut.core.order.Ordered
-import io.micronaut.http.HttpRequest
 import io.micronaut.http.HttpStatus
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
@@ -13,11 +12,9 @@ import io.micronaut.security.annotation.Secured
 import io.micronaut.security.authentication.Authentication
 import io.micronaut.security.authentication.DefaultAuthentication
 import io.micronaut.security.rules.SecurityRule
-import io.micronaut.security.rules.SecurityRuleResult
 import io.micronaut.security.token.reader.HttpHeaderTokenReader
 import io.micronaut.security.token.reader.TokenReader
 import io.micronaut.security.token.validator.TokenValidator
-import io.micronaut.web.router.RouteMatch
 import io.reactivex.Flowable
 import org.reactivestreams.Publisher
 import org.slf4j.LoggerFactory
@@ -148,6 +145,9 @@ class CustomAuthTokenValidator(
 ) : TokenValidator {
     private val log = LoggerFactory.getLogger(this.javaClass)
 
+    override fun getOrder(): Int {
+        return Ordered.HIGHEST_PRECEDENCE + 10_000
+    }
     /**
      * トークンを検証する
      * 戻り値に、Flowable.empty() を返すと、
@@ -161,8 +161,18 @@ class CustomAuthTokenValidator(
     override fun validateToken(token: String): Publisher<Authentication> {
         log.info("Start validateToken")
         // トークンを Base64 デコードする
-        val decoded = Base64.getDecoder().decode(token.toByteArray()).toString(Charsets.UTF_8)
-        val (userId, secret) = decoded.split(":")
+        val decoded = runCatching {
+            Base64.getDecoder().decode(token.toByteArray()).toString(Charsets.UTF_8)
+        }
+            .onFailure {
+                log.error("Base64 decoded failed: ${it.message}")
+            }
+            .getOrNull()
+        val paramList = decoded?.split(":")
+        if(paramList == null || paramList.size != 2) {
+            return Flowable.empty()
+        }
+        val (userId, secret) = paramList
         val code = secret.toIntOrNull()
 
         // 認証キーを判定

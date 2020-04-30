@@ -19,6 +19,9 @@ micronaut:
             -   pattern: /totp/**
                 access:
                     - isAuthenticated()
+            -   pattern: /**
+                access:
+                    - isAnonymous()
 #        endpoints:
 #            login:
 #                enabled: true

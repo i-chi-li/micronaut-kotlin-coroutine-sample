@@ -54,6 +54,7 @@ Micronaut フレームワークで、Kotlin Coroutine を利用するサンプ�
     - The Http Server
         - [Error Handling](docs/micronaut/06_15_error_handling.md)
         - [HTTP セッション](docs/micronaut/06_22_http_sessions.md)
+    - [The HTTP Client](docs/micronaut/07_00_http_client.md)
     - Language Support
         - [Kotlin and AOP Advice](docs/micronaut/13_03_03_kotlin_and_aop_advice.md)
         - [Coroutines Support](docs/micronaut/13_03_05_coroutines_support.md)

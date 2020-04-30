@@ -148,6 +148,14 @@ tasks.withType(JavaExec) {
     // '-Dkotlinx.coroutines.debug' は、スレッド名に Coroutine 名を追加するなど、Coroutine に関するログ出力を強化する
     jvmArgs('-noverify', '-XX:TieredStopAtLevel=1', '-Dcom.sun.management.jmxremote', '-Dkotlinx.coroutines.debug')
     environment(["JOB_PROCESS_CAPACITY": 10, "JOB_PROCESS_PARALLEL_NUMBER": 4])
+    if(project.hasProperty("url")) {
+        println("url: ${project.url}")
+        environment += ["FILTER_PROXY_URL": project.url]
+    }
+    if(project.hasProperty("port")) {
+        println("port: ${project.port}")
+        environment += ["MICRONAUT_SERVER_PORT": project.port]
+    }
 }
 
 task makeToc {
