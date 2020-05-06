@@ -3,6 +3,6 @@
 package micronaut.kotlin.coroutine.sample
 
 object CustomMediaType {
-    const val TEXT_PLAIN_UTF8 = "text/plain; charset=utf-8"
-    const val APPLICATION_XML_UTF8 = "application/xml; charset=utf-8"
+    const val TEXT_PLAIN_UTF8 = "text/plain; charset=UTF-8"
+    const val APPLICATION_XML_UTF8 = "application/xml; charset=UTF-8"
 }
