@@ -43,6 +43,8 @@ Micronaut フレームワークで、Kotlin Coroutine を利用するサンプ�
     - [select 式（実験的）](docs/coroutine/90_select_expression_experimental.md)
     - [kotlin-coroutines-test モジュール](docs/coroutine/100_kotlinx_coroutines_test.md)
 - Micronaut
+    - Inversion of Control
+        - [Bean Introspection](docs/micronaut/03_14_bean_introspection.md)
     - [アスペクト指向プログラミング](docs/micronaut/05_00_aspect_oriented_programming.md)
         - [Around Advice](docs/micronaut/05_01_around_advice.md)
         - [Introduction Advice](docs/micronaut/05_02_introduction_advice.md)
