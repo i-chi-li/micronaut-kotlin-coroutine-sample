@@ -118,3 +118,26 @@ fun <T> List<T>.asSpecialSequence(): Sequence<T> {
 - private: 同じクラス中でのみ利用可能
 - internal: 同じモジュール内でのみ利用可能
 - protected: サブクラスからも利用可能
+
+## Class と KClass について
+Class は、Java のクラス型。
+KClass は、Kotlin のクラス型。
+
+### 型判定
+Java の場合
+```
+if(Integer.valueOf(1) instanceof Number) {}
+```
+
+Kotlin の場合
+```kotlin
+payload.kotlin.isSubclassOf(CustomCodeSealedClass::class)
+```
+
+## object 定義について
+object は、Kotlin でのシングルトンオブジェクトを作成するための構文。
+
+KClass から、object で定義したインスタンスを取得するには、以下のようにする。
+```kotlin
+val instance = payload.kotlin.objectInstance
+```
