@@ -68,7 +68,7 @@ micronaut:
 - @PutOperations  
   複数の @CachePut を定義できる。一括登録・更新処理などに付与する。 
 
-[サンプルコード](../../../src/main/kotlin/micronaut/kotlin/coroutine/sample/CacheController.kt)
+[サンプルコード](../../src/main/kotlin/micronaut/kotlin/coroutine/sample/CacheController.kt)
 
 実行結果
 
