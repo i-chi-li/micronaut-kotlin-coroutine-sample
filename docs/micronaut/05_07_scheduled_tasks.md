@@ -9,6 +9,9 @@
 スケジュールタスクの実行に利用するスレッドプールは、設定で変更できる。
 変更できる内容は、並行数や、プール数など。
 設定は、グループ毎に定義でき、タスク毎にスレッドプールを分けることもできる。
+Controller クラスの作成は不要。ただし、@Singleton などの管理 Bean にする必要がある。
+
+[サンプルソース](../../src/main/kotlin/micronaut/kotlin/coroutine/sample/ScheduledTasksController.kt)
 
 ## @Scheduled アノテーション
 @Scheduled 設定できる属性は以下となる。
