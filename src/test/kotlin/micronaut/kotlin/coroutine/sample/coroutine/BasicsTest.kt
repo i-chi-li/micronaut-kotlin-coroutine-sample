@@ -1,16 +1,19 @@
 package micronaut.kotlin.coroutine.sample.coroutine
 
-import io.kotlintest.*
-import io.kotlintest.data.forall
-import io.kotlintest.extensions.TopLevelTest
-import io.kotlintest.matchers.haveLength
-import io.kotlintest.matchers.startWith
-import io.kotlintest.matchers.string.include
-import io.kotlintest.specs.StringSpec
-import io.kotlintest.tables.row
+import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.core.Tag
+import io.kotest.core.spec.Spec
+import io.kotest.core.spec.style.StringSpec
+import io.kotest.core.test.TestCase
+import io.kotest.core.test.TestResult
+import io.kotest.data.forAll
+import io.kotest.data.row
+import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlin.math.max
+import kotlin.time.ExperimentalTime
+import kotlin.time.milliseconds
 
 // タグの定義
 // タグは、テスト実行対象を以下のように指定できる。
@@ -27,6 +30,7 @@ object Local : Tag()
  * Spec の詳細は、以下を参照。
  * https://github.com/kotest/kotest/blob/3.3.2/doc/styles.md
  */
+@ExperimentalTime
 @OptIn(ExperimentalCoroutinesApi::class)
 class PlainTest : StringSpec({
     // ここで指定した文字列は、テスト結果に出力される。
@@ -38,39 +42,33 @@ class PlainTest : StringSpec({
     "文字列長が 5 であること" {
         // 判定に利用するメソッドの一覧は、以下を参照。
         // https://github.com/kotest/kotest/blob/3.3.2/doc/matchers.md
-        "hello".length.shouldBe(5)
-        "hello".shouldBe(haveLength(5))
+        "hello".length shouldBe 5
         // Suspend 関数が利用可能。
         delay(10)
     }
     "文字列に'el'が含まれていること" {
-        "hello".shouldBe(include("el"))
+        "hello".contains("el") shouldBe true
     }
     "データ駆動型テスト" {
-        forall(
+        forAll(
             row(1, 5, 5),
             row(1, 0, 1),
             row(0, 0, 0)
         ) { a, b, maxVal ->
-            max(a, b).shouldBe(maxVal)
+            max(a, b) shouldBe maxVal
         }
     }
     "例外発生テスト" {
         val exception = shouldThrow<IllegalAccessException> {
             throw IllegalAccessException("Something went wrong")
         }
-        exception.message.should(startWith("Something"))
+        exception.message?.contains("Something") shouldBe true
     }
     "テスト実行の設定".config(timeout = 100.milliseconds, invocations = 5, threads = 2, tags = setOf(Linux, Local)) {
         println("タイムアウト 100 ミリ秒、実行回数 5 回、スレッド数 2 、タグを設定、Thread name: [${Thread.currentThread().name}]")
         delay(10)
     }
 }) {
-    override fun beforeSpecClass(spec: Spec, tests: List<TopLevelTest>) {
-        super.beforeSpecClass(spec, tests)
-        println("テストクラス開始前に一度だけ実行")
-    }
-
     override fun beforeSpec(spec: Spec) {
         super.beforeSpec(spec)
         println("テストクラス開始前に毎回実行（インスタンス化する度に複数回実行）")
@@ -89,11 +87,6 @@ class PlainTest : StringSpec({
     override fun afterSpec(spec: Spec) {
         super.afterSpec(spec)
         println("テストクラス完了後に毎回実行")
-    }
-
-    override fun afterSpecClass(spec: Spec, results: Map<TestCase, TestResult>) {
-        super.afterSpecClass(spec, results)
-        println("テストクラス完了後に一度だけ実行")
     }
 }
 

@@ -1,8 +1,8 @@
 package micronaut.kotlin.coroutine.sample.micronaut
 
-import io.kotlintest.matchers.types.shouldNotBeNull
-import io.kotlintest.shouldBe
-import io.kotlintest.specs.StringSpec
+import io.kotest.core.spec.style.StringSpec
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import io.micronaut.http.MediaType
 import io.micronaut.http.annotation.Get
 import io.micronaut.http.client.RxHttpClient
@@ -25,47 +25,47 @@ class CoroutineControllerTest(
 ) : StringSpec({
     "suspend function" {
         val result = client.toBlocking().retrieve("/coroutine")
-        println("[${description().name}] result: $result")
-        result.shouldNotBeNull()
+//        println("[${description().name}] result: $result")
+        result shouldNotBe null
     }
 
     "delayed" {
         val result = client.toBlocking().retrieve("/coroutine/delayed")
-        println("[${description().name}] result: $result")
-        result.shouldNotBeNull()
+//        println("[${description().name}] result: $result")
+        result shouldNotBe null
     }
 
     "status" {
         val result = client.toBlocking().exchange<String>("/coroutine/status")
-        println("[${description().name}]: ${result.status}")
-        result.shouldNotBeNull()
+//        println("[${description().name}]: ${result.status}")
+        result shouldNotBe null
     }
 
     "statusDelayed" {
         val result = client.toBlocking().exchange<String>("/coroutine/status")
-        println("[${description().name}]: ${result.status}")
-        result.shouldNotBeNull()
+//        println("[${description().name}]: ${result.status}")
+        result shouldNotBe null
     }
 
     // Flow 処理でストリーミングを受信
     "headlinesWithFlow" {
         val stream = headlineClient.streamHeadlines()
-        println("[${description().name}]: Start")
+//        println("[${description().name}]: Start")
         val result = mutableListOf<Headline>()
         // Suspend 関数を利用可能
         stream.collect {
             // サーバ側の処理は、一度に全部行われるのではなく、クライアントでデータを要求する度にデータを返す。
-            println("[${description().name}]: $it")
+//            println("[${description().name}]: $it")
             result.add(it)
         }
-        result.size.shouldBe(10)
-        println("[${description().name}]: Finish")
+        result.size shouldBe 10
+//        println("[${description().name}]: Finish")
     }
 
     "background" {
         val result = client.toBlocking().retrieve("/coroutine/background")
-        println("[${description().name}]: $result")
-        result.shouldNotBeNull()
+//        println("[${description().name}]: $result")
+        result shouldNotBe null
     }
 })
 

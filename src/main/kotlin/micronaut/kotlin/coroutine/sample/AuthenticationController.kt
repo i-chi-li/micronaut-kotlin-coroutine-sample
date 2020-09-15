@@ -130,17 +130,17 @@ class AuthenticationProviderUserPassword : AuthenticationProvider {
      * この関数のデフォルト実装では、非推奨関数の方を内部から呼び出しているため、
      * この関数を実装しない場合は、非推奨関数をきちんと実装する必要がある。
      *
-     * @param request リクエスト
+     * @param httpRequest リクエスト
      * @param authenticationRequest 認証情報
      * @return 認証結果を返す。
      */
     override fun authenticate(
-        request: HttpRequest<*>,
-        authenticationRequest: AuthenticationRequest<*, *>
+        httpRequest: HttpRequest<*>?,
+        authenticationRequest: AuthenticationRequest<*, *>?
     ): Publisher<AuthenticationResponse> {
         log.info("Start authenticate()")
         return if (
-            authenticationRequest.identity == "users"
+            authenticationRequest?.identity == "users"
             && authenticationRequest.secret == "password"
         ) {
             log.info("Finish authenticate() Successful")
@@ -150,15 +150,6 @@ class AuthenticationProviderUserPassword : AuthenticationProvider {
             val reason = AuthenticationFailureReason.CREDENTIALS_DO_NOT_MATCH
             Flowable.just(AuthenticationFailed(reason))
         }
-    }
-
-    /**
-     * 非推奨メソッドであり、利用しないが、実装が必須
-     */
-    override fun authenticate(
-        authenticationRequest: AuthenticationRequest<*, *>
-    ): Publisher<AuthenticationResponse> {
-        TODO("Unsupported Function")
     }
 }
 
@@ -176,8 +167,20 @@ class CustomLoginHandler : LoginHandler {
      * @param request リクエスト
      * @return ログイン成功時のレスポンスを返す。
      */
-    override fun loginSuccess(userDetails: UserDetails, request: HttpRequest<*>): HttpResponse<*> {
+    override fun loginSuccess(
+        userDetails: UserDetails,
+        request: HttpRequest<*>
+    ): MutableHttpResponse<*>? {
         log.info("Start loginSuccess")
+        return HttpResponse.ok("Authentication Successful [userDetails: $userDetails]")
+    }
+
+    override fun loginRefresh(
+        userDetails: UserDetails?,
+        refreshToken: String?,
+        request: HttpRequest<*>?
+    ): MutableHttpResponse<*> {
+        log.info("Start loginRefresh")
         return HttpResponse.ok("Authentication Successful [userDetails: $userDetails]")
     }
 
@@ -193,17 +196,13 @@ class CustomLoginHandler : LoginHandler {
      * @param authenticationResponse 認証結果
      * @return ログイン失敗時のレスポンスを返す。
      */
-    override fun loginFailed(authenticationResponse: AuthenticationResponse): MutableHttpResponse<*> {
+    override fun loginFailed(
+        authenticationResponse: AuthenticationResponse?,
+        request: HttpRequest<*>?
+    ): MutableHttpResponse<*>? {
         log.info("Start loginSuccess")
-        val message = authenticationResponse.message.orElse("None")
+        val message = authenticationResponse?.message?.orElse("None")
         return HttpResponse.unauthorized<String>().body("Login failed [$message]")
-    }
-
-    /**
-     * 非推奨メソッドで、利用しないが、実装が必須
-     */
-    override fun loginFailed(authenticationFailed: AuthenticationFailed): HttpResponse<*> {
-        TODO("Unsupported function")
     }
 }
 

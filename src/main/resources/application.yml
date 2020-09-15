@@ -84,3 +84,9 @@ retry:
 schedule:
     conf:
         fixed: "1m"
+
+# プロパティ値の取得・設定方法
+custom-vals:
+    sample-value1: ${foo.sample1:`foo_sample_1`}
+    sampleValue2: ${foo.sample2:}
+    sampleValue3: ${foo.sample3:`foo_sample3`}

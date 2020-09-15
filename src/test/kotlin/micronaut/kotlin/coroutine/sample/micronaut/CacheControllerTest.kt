@@ -1,7 +1,7 @@
 package micronaut.kotlin.coroutine.sample.micronaut
 
-import io.kotlintest.matchers.types.shouldNotBeNull
-import io.kotlintest.specs.StringSpec
+import io.kotest.core.spec.style.StringSpec
+import io.kotest.matchers.shouldNotBe
 import io.micronaut.http.annotation.Get
 import io.micronaut.http.client.annotation.Client
 import io.micronaut.test.annotation.MicronautTest
@@ -10,7 +10,7 @@ import io.micronaut.test.annotation.MicronautTest
 class CacheControllerTest(cacheClient: CacheClient) : StringSpec({
     "キャッシュの動作確認" {
         val result = cacheClient.testCache(1, 2, "foo", "memo")
-        result.shouldNotBeNull()
+        result shouldNotBe null
     }
 })
 

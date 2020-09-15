@@ -5,9 +5,9 @@ Micronaut フレームワークで、Kotlin Coroutine を利用するサンプ�
 | :--- | :--- |
 | Java | 1.8 |
 | Kotlin | 1.3 |
-| KotlinTest | 3.3 |
+| KotlinTest | 4.1 |
 | Coroutine | 1.3 |
-| Micronaut | 1.3 |
+| Micronaut | 2.0 |
 
 このプロジェクトの記述内容は、間違っている場合もあります。
 必ず、公式ドキュメントを確認するようにしてください。
@@ -16,12 +16,8 @@ Micronaut フレームワークで、Kotlin Coroutine を利用するサンプ�
 正確な情報は、以下の公式サイトを参照してください。
 
 - [Kotlin Coroutine](https://kotlinlang.org/docs/reference/coroutines/coroutines-guide.html)
-- [KotlinTest](https://github.com/kotest/kotest/tree/3.3.2)
+- [KotlinTest](https://github.com/kotest/kotest)
 - [Micronaut](https://micronaut.io/)
-
->Kotlin-test は、現時点は、4.x 系がリリースされており、
->GitHub の main ブランチは、4.x （名称が、Kotest に変更）になっている。
->このプロジェクトでは、3.3 なので、対応するブランチの情報を参照する必要がある。
 
 ---
 

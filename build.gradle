@@ -39,18 +39,20 @@ dependencies {
     implementation "io.micronaut:micronaut-http-client"
     // Endpoint を利用する場合に必要
     implementation "io.micronaut:micronaut-management"
+    // Micronaut Cache
+    implementation "io.micronaut.cache:micronaut-cache-caffeine"
     // バリデーションを利用する場合に必要
     implementation "io.micronaut:micronaut-validation"
     // バリデーションで、MessageInterpolator を利用する場合に必要
-    implementation "io.micronaut.configuration:micronaut-hibernate-validator"
+    implementation "io.micronaut.beanvalidation:micronaut-hibernate-validator"
     // Jackson で XML 変換を利用する場合に必要
     implementation "io.micronaut.xml:micronaut-jackson-xml"
     // Security モジュールを利用する場合に必要
-    implementation "io.micronaut:micronaut-security"
+    implementation "io.micronaut.security:micronaut-security"
     // Session モジュールを利用する場合に必要（インメモリ版）
     //implementation "io.micronaut:micronaut-session"
     // Security モジュールで、Session モジュールを利用する場合に必要
-    //implementation "io.micronaut:micronaut-security-session"
+    //implementation "io.micronaut.security:micronaut-security-session"
 
     // Time-based One-time Password (TOTP) を扱うライブラリ
     implementation "com.warrenstrange:googleauth:1.4.0"
@@ -61,7 +63,7 @@ dependencies {
     // コンパイル時にアノテーションをバリデーションするために必要
     kapt "io.micronaut:micronaut-validation"
     // Security モジュールを利用する場合に必要
-    kapt "io.micronaut:micronaut-security"
+    kapt "io.micronaut.security:micronaut-security"
 
     kaptTest platform("io.micronaut:micronaut-bom:$micronautVersion")
     kaptTest "io.micronaut:micronaut-inject-java"
@@ -70,21 +72,14 @@ dependencies {
     runtimeOnly "ch.qos.logback:logback-classic:1.2.3"
 
     testImplementation platform("io.micronaut:micronaut-bom:$micronautVersion")
-    testImplementation "io.micronaut.test:micronaut-test-kotlintest"
-    testImplementation "io.mockk:mockk:1.9.3"
-    testImplementation "io.kotlintest:kotlintest-runner-junit5:3.3.2"
-    // 以下の 2 つは、JUnit5 でテストを作成する場合に追加。
-    // 「micronaut-test-junit5」は、Micronaut Test ドキュメントの Kotlin でのテストの方に記載が無い（Java の方にはある）。
-    // 追加しないと、テスト実行時に以下のような例外が発生する。
-    // java.lang.ArrayStoreException: sun.reflect.annotation.TypeNotPresentExceptionProxy
-    //     at sun.reflect.annotation.AnnotationParser.parseClassArray(AnnotationParser.java:724)
-    //     ...
-    // 実際に不足しているクラスは、「io.micronaut.test.extensions.junit5.MicronautJunit5Extension」となる。
-    testImplementation "io.micronaut.test:micronaut-test-junit5"
-    testImplementation "org.junit.jupiter:junit-jupiter:5.6.0"
-
-    // Kotlin Coroutine テストユーティリティを利用する場合に追加
-    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:${coroutineVersion}"
+    // Micronaut Kotlin Test
+    testImplementation "io.micronaut.test:micronaut-test-kotest"
+    // テスト用モック作成用
+    testImplementation "io.mockk:mockk:1.10.0"
+    // Kotlin Test for JUnit5
+    testImplementation "io.kotest:kotest-runner-junit5-jvm"
+    // Kotlin Coroutine テストユーティリティ
+    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutineVersion"
     // Kotlin Coroutine のデバッグ機能を利用する場合に追加
     // ただし、現時点では、JUnit 5 には、対応していないため不採用（JUnit 4 のみ対応している）
     // https://github.com/Kotlin/kotlinx.coroutines/tree/master/kotlinx-coroutines-debug

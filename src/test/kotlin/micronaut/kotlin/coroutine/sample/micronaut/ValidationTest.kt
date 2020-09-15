@@ -1,8 +1,8 @@
 package micronaut.kotlin.coroutine.sample.micronaut
 
-import io.kotlintest.matchers.collections.shouldHaveSize
-import io.kotlintest.shouldThrowExactlyUnit
-import io.kotlintest.specs.StringSpec
+import io.kotest.assertions.throwables.shouldThrowExactlyUnit
+import io.kotest.core.spec.style.StringSpec
+import io.kotest.matchers.shouldBe
 import io.micronaut.context.ApplicationContext
 import io.micronaut.core.annotation.AnnotationValue
 import io.micronaut.core.annotation.Introspected
@@ -15,7 +15,14 @@ import javax.validation.Constraint
 import javax.validation.ConstraintViolationException
 import javax.validation.Payload
 import javax.validation.Validator
-import javax.validation.constraints.*
+import javax.validation.constraints.AssertTrue
+import javax.validation.constraints.DecimalMax
+import javax.validation.constraints.Max
+import javax.validation.constraints.Min
+import javax.validation.constraints.NotBlank
+import javax.validation.constraints.NotEmpty
+import javax.validation.constraints.NotNull
+import javax.validation.constraints.Size
 import javax.validation.groups.Default
 import kotlin.reflect.KClass
 
@@ -62,7 +69,7 @@ class ValidationTest(
         val constraintViolations = validator.validate(pojoBean)
         // バリデーション結果を確認
         constraintViolations.forEach { println(it.message) }
-        constraintViolations.shouldHaveSize(6)
+        constraintViolations.size shouldBe 6
     }
     "Custom message validation" {
         // バリデーション時のメッセージを変更するサンプル

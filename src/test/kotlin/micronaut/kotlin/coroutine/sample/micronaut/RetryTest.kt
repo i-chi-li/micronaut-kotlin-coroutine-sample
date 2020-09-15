@@ -1,7 +1,7 @@
 package micronaut.kotlin.coroutine.sample.micronaut
 
-import io.kotlintest.shouldThrowExactly
-import io.kotlintest.specs.StringSpec
+import io.kotest.assertions.throwables.shouldThrowExactly
+import io.kotest.core.spec.style.StringSpec
 import io.micronaut.context.ApplicationContext
 import io.micronaut.context.annotation.Prototype
 import io.micronaut.context.event.ApplicationEventListener

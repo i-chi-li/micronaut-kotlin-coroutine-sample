@@ -2,7 +2,6 @@ package micronaut.kotlin.coroutine.sample
 
 import io.micronaut.context.ApplicationContext
 import io.micronaut.context.annotation.Context
-import io.micronaut.context.annotation.Infrastructure
 import io.micronaut.context.annotation.Prototype
 import io.micronaut.http.MediaType
 import io.micronaut.http.annotation.Controller
@@ -39,8 +38,9 @@ class ScopesController(
     private val constructorContextBean: ContextBean,
     // コンストラクタプロトタイプ
     private val constructorPrototypeBean: PrototypeBean,
-    // コンストラクタインフラストラクチャ
-    private val constructorInfrastructureBean: InfrastructureBean,
+// TODO @Infrastructure は、Bean として認識されない問題が発生しているため除外
+//    // コンストラクタインフラストラクチャ
+//    private val constructorInfrastructureBean: InfrastructureBean,
     // コンストラクタスレッドローカル
     private val constructorThreadLocalBean: ThreadLocalBean,
     // コンストラクタリフレッシャブルローカル
@@ -67,9 +67,10 @@ class ScopesController(
     @Inject
     private lateinit var fieldPrototypeBean: PrototypeBean
 
-    // フィールドインフラストラクチャ
-    @Inject
-    private lateinit var fieldInfrastructureBean: InfrastructureBean
+// TODO @Infrastructure は、Bean として認識されない問題が発生しているため除外
+//    // フィールドインフラストラクチャ
+//    @Inject
+//    private lateinit var fieldInfrastructureBean: InfrastructureBean
 
     // フィールドスレッドローカル
     @Inject
@@ -205,41 +206,42 @@ class ScopesController(
         return HashInfo("dynamicPrototypeBean", applicationContext.getBean(PrototypeBean::class.java))
     }
 
-    /**
-     * Infrastructure
-     * constructorInfrastructureBean のハッシュを取得
-     *
-     * curl -i http://localhost:8080/scopes/constructorInfrastructure
-     */
-    @Get("/constructorInfrastructure")
-    @Produces(MediaType.APPLICATION_JSON)
-    fun constructorInfrastructure(): HashInfo {
-        return HashInfo("constructorInfrastructureBean", constructorInfrastructureBean)
-    }
-
-    /**
-     * Infrastructure
-     * fieldInfrastructureBean のハッシュを取得
-     *
-     * curl -i http://localhost:8080/scopes/fieldInfrastructure
-     */
-    @Get("/fieldInfrastructure")
-    @Produces(MediaType.APPLICATION_JSON)
-    fun fieldInfrastructure(): HashInfo {
-        return HashInfo("fieldInfrastructureBean", fieldInfrastructureBean)
-    }
-
-    /**
-     * Infrastructure
-     * dynamicInfrastructureBean のハッシュを取得
-     *
-     * curl -i http://localhost:8080/scopes/dynamicInfrastructure
-     */
-    @Get("/dynamicInfrastructure")
-    @Produces(MediaType.APPLICATION_JSON)
-    fun dynamicInfrastructure(): HashInfo {
-        return HashInfo("dynamicInfrastructureBean", applicationContext.getBean(InfrastructureBean::class.java))
-    }
+// TODO @Infrastructure は、Bean として認識されない問題が発生しているため除外
+//    /**
+//     * Infrastructure
+//     * constructorInfrastructureBean のハッシュを取得
+//     *
+//     * curl -i http://localhost:8080/scopes/constructorInfrastructure
+//     */
+//    @Get("/constructorInfrastructure")
+//    @Produces(MediaType.APPLICATION_JSON)
+//    fun constructorInfrastructure(): HashInfo {
+//        return HashInfo("constructorInfrastructureBean", constructorInfrastructureBean)
+//    }
+//
+//    /**
+//     * Infrastructure
+//     * fieldInfrastructureBean のハッシュを取得
+//     *
+//     * curl -i http://localhost:8080/scopes/fieldInfrastructure
+//     */
+//    @Get("/fieldInfrastructure")
+//    @Produces(MediaType.APPLICATION_JSON)
+//    fun fieldInfrastructure(): HashInfo {
+//        return HashInfo("fieldInfrastructureBean", fieldInfrastructureBean)
+//    }
+//
+//    /**
+//     * Infrastructure
+//     * dynamicInfrastructureBean のハッシュを取得
+//     *
+//     * curl -i http://localhost:8080/scopes/dynamicInfrastructure
+//     */
+//    @Get("/dynamicInfrastructure")
+//    @Produces(MediaType.APPLICATION_JSON)
+//    fun dynamicInfrastructure(): HashInfo {
+//        return HashInfo("dynamicInfrastructureBean", applicationContext.getBean(InfrastructureBean::class.java))
+//    }
 
     /**
      * ThreadLocal
@@ -463,18 +465,19 @@ class PrototypeBean : Bean {
     }
 }
 
-/**
- * @Infrastructure は、毎回生成される。@Replaces で置換できない。
- */
-@Infrastructure
-class InfrastructureBean : Bean {
-    override val id = Random.nextInt(0, Int.MAX_VALUE)
-
-    @PostConstruct
-    fun init() {
-        printClassHash("init", this)
-    }
-}
+// TODO @Infrastructure は、Bean として認識されない問題が発生しているため除外
+///**
+// * @Infrastructure は、毎回生成される。@Replaces で置換できない。
+// */
+//@Infrastructure
+//class InfrastructureBean : Bean {
+//    override val id = Random.nextInt(0, Int.MAX_VALUE)
+//
+//    @PostConstruct
+//    fun init() {
+//        printClassHash("init", this)
+//    }
+//}
 
 /**
  * @ThreadLocal は、同一スレッドでは同一インスタンス。
