@@ -73,3 +73,4 @@ Micronaut フレームワークで、Kotlin Coroutine を利用するサンプ�
 - Micronaut
     - [基本的なテスト実装](src/test/kotlin/micronaut/kotlin/coroutine/sample/micronaut/CoroutineControllerTest.kt)
     - [レスポンス用 XML 変換](src/main/kotlin/micronaut/kotlin/coroutine/sample/XmlController.kt)
+    - [設定値の利用方法](src/main/kotlin/micronaut/kotlin/coroutine/sample/ConfigurationUsageController.kt)

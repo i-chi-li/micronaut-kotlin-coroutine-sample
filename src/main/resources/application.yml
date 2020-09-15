@@ -87,6 +87,12 @@ schedule:
 
 # プロパティ値の取得・設定方法
 custom-vals:
-    sample-value1: ${foo.sample1:`foo_sample_1`}
-    sampleValue2: ${foo.sample2:}
-    sampleValue3: ${foo.sample3:`foo_sample3`}
+    # 環境変数で上書きする場合は、CUST_SAMPLE1=env_value の様に設定する
+    # システムプロパティで上書きする場合は、-Dcust.sample1=cli_value の様に設定する
+    # 実際に試す場合は、build.gradle の tasks.withType(JavaExec) 定義中にある、
+    # jvmArgs または、environment に追記すること。
+    sample-value1: ${cust.sample1:`application_yml_1`}
+    # コロンを取り除いた場合、必ず環境変数やプロパティなどで、値を設定しないと参照時点でエラーとなる。
+    sampleValue2: ${cust.sample2:}
+    sampleValue3: ${cust.sample3:`application_yml_3`}
+    sampleValue4: ${cust.sample4:`application_yml_4`}
