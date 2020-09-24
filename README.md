@@ -53,6 +53,7 @@ Micronaut フレームワークで、Kotlin Coroutine を利用するサンプ�
         - [Error Handling](docs/micronaut/06_15_error_handling.md)
         - [HTTP セッション](docs/micronaut/06_22_http_sessions.md)
     - [The HTTP Client](docs/micronaut/07_00_http_client.md)
+        - [@Client を使用した宣言型HTTPクライアント](docs/micronaut/07_03_client-annotation.md)
     - Language Support
         - [Kotlin and AOP Advice](docs/micronaut/13_03_03_kotlin_and_aop_advice.md)
         - [Coroutines Support](docs/micronaut/13_03_05_coroutines_support.md)
@@ -74,3 +75,4 @@ Micronaut フレームワークで、Kotlin Coroutine を利用するサンプ�
     - [基本的なテスト実装](src/test/kotlin/micronaut/kotlin/coroutine/sample/micronaut/CoroutineControllerTest.kt)
     - [レスポンス用 XML 変換](src/main/kotlin/micronaut/kotlin/coroutine/sample/XmlController.kt)
     - [設定値の利用方法](src/main/kotlin/micronaut/kotlin/coroutine/sample/ConfigurationUsageController.kt)
+    - [@Client を使用した宣言型HTTPクライアント](src/main/kotlin/micronaut/kotlin/coroutine/sample/HttpClientController.kt)
