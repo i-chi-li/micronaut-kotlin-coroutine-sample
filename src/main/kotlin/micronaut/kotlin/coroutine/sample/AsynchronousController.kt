@@ -485,10 +485,10 @@ class JobProcessManager(
         runCatching {
             // 主要な処理を実行
             // 処理結果は、返さない
-            val result = jobProcessor.doProcess(inputData)
+            jobProcessor.doProcess(inputData)
 
             // 3 で割り切れる場合に IllegalStateException をスローする
-            throwException(inputData.inputData)
+            //throwException(inputData.inputData)
 
 //            log.info("result: $result")
         }
@@ -514,7 +514,7 @@ class JobProcessManager(
 //            log.info("result: $result")
 
             // 3 で割り切れる場合に IllegalStateException をスローする
-            throwException(inputData.inputData)
+            //throwException(inputData.inputData)
 
             // 処理結果返信
             response.complete(result)
@@ -527,10 +527,10 @@ class JobProcessManager(
     }
 
     private fun throwException(num: Int) {
-//        if (num % 3 == 0) {
-//            log.info("Throw !!!")
-//            throw IllegalStateException("$num % 3 == 0")
-//        }
+        if (num % 3 == 0) {
+            log.info("Throw !!!")
+            throw IllegalStateException("$num % 3 == 0")
+        }
     }
 }
 
@@ -566,10 +566,10 @@ class JobProcessor(private val processorName: String) {
             // 処理結果データを生成
             ProcessResultData("$processorName, inputData: ${inputData.inputData}")
         }
-            .onSuccess { resultData ->
-                // 正常終了時の処理
+//            .onSuccess { resultData ->
+//                // 正常終了時の処理
 //                log.info("Finish doProcess($inputData): $resultData")
-            }
+//            }
             .onFailure { throwable ->
                 // 例外発生時の処理
 //                log.info("onFailure")

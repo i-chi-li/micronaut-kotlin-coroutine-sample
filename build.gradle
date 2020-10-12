@@ -1,11 +1,13 @@
 plugins {
-    id "org.jetbrains.kotlin.jvm" version "1.3.72"
-    id "org.jetbrains.kotlin.kapt" version "1.3.72"
-    id "org.jetbrains.kotlin.plugin.allopen" version "1.3.72"
+    id "org.jetbrains.kotlin.jvm" version "1.4.10"
+    id "org.jetbrains.kotlin.kapt" version "1.4.10"
+    id "org.jetbrains.kotlin.plugin.allopen" version "1.4.10"
     id "com.github.johnrengelman.shadow" version "5.2.0"
     id "application"
     // IntelliJ IDEA の設定をするためのプラグイン
     id "org.jetbrains.gradle.plugin.idea-ext" version "0.7"
+    // Docker イメージ作成用
+    id "com.google.cloud.tools.jib" version "2.6.0"
 }
 
 version "0.1"
@@ -23,6 +25,14 @@ configurations {
 }
 
 dependencies {
+    // AWS SDK V2
+    implementation platform('software.amazon.awssdk:bom:2.15.4')
+    // スイッチロール（Assume Role）をしてログインする場合に必要
+    implementation "software.amazon.awssdk:sts"
+    implementation "software.amazon.awssdk:sqs"
+    implementation "software.amazon.awssdk:s3"
+
+    // Micronaut
     implementation platform("io.micronaut:micronaut-bom:$micronautVersion")
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlinVersion}"
     implementation "org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}"
@@ -138,18 +148,76 @@ shadowJar {
     mergeServiceFiles()
 }
 
+jib {
+    from {
+        image = "amazoncorretto:8"
+    }
+    container {
+        environment = [
+            // Docker コンテナでは、LANG 設定を以下のようにしないと文字化けする。
+            LANG             : "en_US.UTF-8",
+            // jvmFlags で指定したオプションは、上書きできない。
+            JAVA_TOOL_OPTIONS: '-Xms64m -Xmx512m',
+
+            "AWS_PROFILE"   : "sandbox",
+            "REGION"        : "ap-northeast-1",
+            "SQS_QUEUE_NAME": "aaa.fifo",
+            "S3_BUCKET_NAME": "sample-bucket-202010121533abc",
+            "API_URL"       : "https://httpbin.org/post"
+
+        ]
+        // mainClass が未定義の場合は、main 関数を自動的に検索する。
+        // ただし、main 関数が複数ある場合は、明示的に指定する必要がある。
+        mainClass = mainClassName
+        jvmFlags = [
+            // 拡張オプション（-XX:...）を利用可能にする設定
+            '-XX:+UnlockExperimentalVMOptions',
+            // ヒープサイズをメモリサイズではなく CGroup のメモリ制限値を利用する設定
+            '-XX:+UseCGroupMemoryLimitForHeap',
+            // ロケールのデフォルトを Japan に設定
+            '-Duser.language=ja',
+            // タイムゾーンのデフォルトを Asia/Tokyo に設定
+            '-Duser.timezone=Asia/Tokyo',
+            // スレッド名に Coroutine 名を追加するなど、Coroutine に関するログ出力を強化する設定
+            '-Dkotlinx.coroutines.debug'
+        ]
+        ports = ['8080']
+    }
+}
+
 tasks.withType(JavaExec) {
     classpath += configurations.developmentOnly
     // '-Dkotlinx.coroutines.debug' は、スレッド名に Coroutine 名を追加するなど、Coroutine に関するログ出力を強化する
     jvmArgs('-noverify', '-XX:TieredStopAtLevel=1', '-Dcom.sun.management.jmxremote', '-Dkotlinx.coroutines.debug')
-    environment(["JOB_PROCESS_CAPACITY": 10, "JOB_PROCESS_PARALLEL_NUMBER": 4])
-    if(project.hasProperty("url")) {
+    environment += ["JOB_PROCESS_CAPACITY": 10, "JOB_PROCESS_PARALLEL_NUMBER": 4]
+    if (project.hasProperty("url")) {
+        // -Purl=http://xxxx
         println("url: ${project.url}")
         environment += ["FILTER_PROXY_URL": project.url]
     }
-    if(project.hasProperty("port")) {
+    if (project.hasProperty("port")) {
         println("port: ${project.port}")
         environment += ["MICRONAUT_SERVER_PORT": project.port]
+    }
+    if (project.hasProperty("profile")
+        && project.hasProperty("region")
+        && project.hasProperty("sqs")
+        && project.hasProperty("bucket")
+        && project.hasProperty("api")
+    ) {
+        println("profile: ${project.profile}")
+        println("region: ${project.region}")
+        println("sqs: ${project.sqs}")
+        println("bucket: ${project.bucket}")
+        println("api: ${project.api}")
+
+        environment += [
+            "AWS_PROFILE"   : project.profile,
+            "REGION"        : project.region,
+            "SQS_QUEUE_NAME": project.sqs,
+            "S3_BUCKET_NAME": project.bucket,
+            "API_URL"       : project.api
+        ]
     }
 }
 
@@ -172,6 +240,7 @@ task makeToc {
 
 // IntelliJ IDEA の設定
 import org.jetbrains.gradle.ext.EncodingConfiguration
+
 idea {
     project {
         settings {

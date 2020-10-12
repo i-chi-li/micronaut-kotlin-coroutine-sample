@@ -12,7 +12,7 @@ import io.micronaut.retry.event.CircuitClosedEvent
 import io.micronaut.retry.event.CircuitOpenEvent
 import io.micronaut.retry.event.RetryEvent
 import io.micronaut.retry.event.RetryEventListener
-import io.micronaut.test.annotation.MicronautTest
+import io.micronaut.test.extensions.kotest.annotation.MicronautTest
 import io.reactivex.Flowable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.delay

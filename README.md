@@ -4,10 +4,10 @@ Micronaut フレームワークで、Kotlin Coroutine を利用するサンプ�
 | 名称 | バージョン |
 | :--- | :--- |
 | Java | 1.8 |
-| Kotlin | 1.3 |
+| Kotlin | 1.4 |
 | KotlinTest | 4.1 |
 | Coroutine | 1.3 |
-| Micronaut | 2.0 |
+| Micronaut | 2.1 |
 
 このプロジェクトの記述内容は、間違っている場合もあります。
 必ず、公式ドキュメントを確認するようにしてください。
@@ -62,6 +62,7 @@ Micronaut フレームワークで、Kotlin Coroutine を利用するサンプ�
     - Tips
         - [非同期レスポンス処理](docs/micronaut/tips/asynchronous_response_processing.md)
         - [認証方式](docs/micronaut/tips/authentication.md)
+        - [Coroutine での AWS サービス利用について](docs/micronaut/tips/coroutine_aws.md)
 
 ---
 

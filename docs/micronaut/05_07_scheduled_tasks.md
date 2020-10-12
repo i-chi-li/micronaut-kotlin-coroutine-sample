@@ -16,6 +16,15 @@ Controller クラスの作成は不要。ただし、@Singleton などの管理 
 ## @Scheduled アノテーション
 @Scheduled 設定できる属性は以下となる。
 属性に設定する値は、設定ファイルに定義した値を参照することもできる。
+時間指定は、3 秒 "3s", 100 ミリ秒 "100ms", 5 分 "5m", 1 時間 "1h", 1 日 "1d"
+
+詳細は
+[4.4 Configuration Properties](https://docs.micronaut.io/latest/guide/index.html#configurationProperties)
+Property Type Conversion - Duration Conversion に例の記載がある。
+
+ISO-8601 デュレーション・フォーマット「PnDTnHnMn.nS」形式での指定方法は、
+[Java 8 クラス Duration#parse](https://docs.oracle.com/javase/jp/8/docs/api/java/time/Duration.html#parse-java.lang.CharSequence-)
+を参照。
 
 | 属性 | デフォルト値 | 説明 |
 | ---- | ---- | ---- |

@@ -6,7 +6,7 @@ import io.kotest.matchers.shouldNotBe
 import io.micronaut.http.MediaType
 import io.micronaut.http.annotation.Get
 import io.micronaut.http.client.annotation.Client
-import io.micronaut.test.annotation.MicronautTest
+import io.micronaut.test.extensions.kotest.annotation.MicronautTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import micronaut.kotlin.coroutine.sample.HashInfo
 

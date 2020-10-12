@@ -2,7 +2,6 @@
 
 package micronaut.kotlin.coroutine.sample
 
-import io.micronaut.http.HttpRequest
 import io.micronaut.http.HttpResponse
 import io.micronaut.http.HttpStatus
 import io.micronaut.http.annotation.Body
@@ -11,10 +10,8 @@ import io.micronaut.http.annotation.Get
 import io.micronaut.http.annotation.Post
 import io.micronaut.security.annotation.Secured
 import io.micronaut.security.rules.SecurityRule
-import io.micronaut.security.rules.SecurityRuleResult
-import io.micronaut.web.router.RouteMatch
 import org.slf4j.LoggerFactory
-import java.util.*
+import java.util.Base64
 import javax.inject.Singleton
 
 /**
@@ -44,7 +41,7 @@ class AuthLoginController(
      * @return HTTP レスポンスを返す。
      */
     @Post
-    fun login(@Body loginData: LoginData, request: HttpRequest<*>): HttpResponse<*> {
+    fun login(@Body loginData: LoginData): HttpResponse<*> {
         return if (loginData.orgId == "org1" && loginData.userId == "user1" && loginData.password == "password") {
             val token = (('a'..'z') + ('A'..'Z') + ('0'..'9'))
                 .shuffled()
@@ -88,7 +85,7 @@ class AuthDataController {
      * curl -iv http://localhost:8080/auth/data -H "Content-Type: application/json; charset=utf-8" -H "Authorization: Bearer b3JnMQl1c2VyMTo1cGFpbko3TkhXUTg5RTBT"
      */
     @Get
-    fun index()= HttpStatus.OK.toString()
+    fun index() = HttpStatus.OK.toString()
 }
 
 /**
