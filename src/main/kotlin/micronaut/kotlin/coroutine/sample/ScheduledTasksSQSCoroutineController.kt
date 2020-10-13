@@ -356,7 +356,7 @@ class ScheduledTasksSQSCoroutine(
         receiveChannel.consumeEach { data ->
             log.info("API 呼び出し $data")
             apiClient.post(data)
-            delay(Random.nextLong(1000, 5000))
+            delay(Random.nextLong(2_000, 10_000))
         }
     }
 }
@@ -423,7 +423,7 @@ class ServerShutdownListener(
      * SQS 処理を待ち合わせする
      */
     private suspend fun joinSqsProcess() {
-        withTimeout(30_000) {
+        withTimeout(25_000) {
             while (scheduledTasksSQSCoroutine.nowProcess.get()) {
                 delay(1000)
                 log.info("処理中フラグ: ${scheduledTasksSQSCoroutine.nowProcess.get()}")
