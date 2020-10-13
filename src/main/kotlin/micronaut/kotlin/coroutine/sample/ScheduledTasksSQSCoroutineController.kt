@@ -58,7 +58,6 @@ import kotlin.random.Random
  * 一緒に使用した場合の検証を行う。
  * 事前に、SQS キューおよび、S3 バケットを作成しておく必要がある。
  *
- *
  * 以下のように起動するとこのクラスが有効となる
  * gradlew --no-build-cache clean run -Pprofile=＜AWS プロファイル＞ \
  * -Pregion=ap-northeast-1 \
@@ -70,6 +69,12 @@ import kotlin.random.Random
  * gradlew --no-build-cache clean run -Pprofile=sandbox -Pregion=ap-northeast-1 \
  * -Psqs=aaa.fifo -Pbucket=sample-bucket-202010121533abc -Papi=https://httpbin.org/post
  *
+ * ローカルに Docker image を作成する方法
+ * gradlew --no-build-cache --no-daemon clean jibDockerBuild
+ *
+ * Docker コンテナの実行方法
+ * docker run -it --name sample1 -p 8080:8080 -v /D/Users/ユーザ名/.aws:/root/.aws micronaut-kotlin-coroutine-sample:0.1
+ *
  * S3 へデータファイルを作成する方法（一度作成すれば良い）
  * curl http://localhost:8080/sqs/s3
  *
@@ -78,7 +83,7 @@ import kotlin.random.Random
  *
  * シャットダウンイベントを発生させる（Docker コンテナを停止する）
  * -t オプションは、コンテナ強制停止までの猶予時間（秒）
- * docker stop -t 120 ＜コンテナID＞
+ * docker stop -t 120 sample1
  */
 @Singleton
 @Requires(beans = [AwsInfrastructure::class])
