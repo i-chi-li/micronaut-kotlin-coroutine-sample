@@ -75,6 +75,10 @@ import kotlin.random.Random
  *
  * SQS キューを登録する方法（キュー処理後削除される）
  * curl http://localhost:8080/sqs/sqs
+ *
+ * シャットダウンイベントを発生させる（Docker コンテナを停止する）
+ * -t オプションは、コンテナ強制停止までの猶予時間（秒）
+ * docker stop -t 120 ＜コンテナID＞
  */
 @Singleton
 @Requires(beans = [AwsInfrastructure::class])
