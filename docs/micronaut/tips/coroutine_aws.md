@@ -3,6 +3,8 @@
 # Coroutine での AWS サービス利用について
 Coroutine を利用して、AWS サービスにアクセスする、実践的な例を説明する。
 
+[サンプルソース](../../../src/main/kotlin/micronaut/kotlin/coroutine/sample/ScheduledTasksSQSCoroutineController.kt)
+
 
 ## 概要
 Micronaut のスケジュールタスクで処理を行う。

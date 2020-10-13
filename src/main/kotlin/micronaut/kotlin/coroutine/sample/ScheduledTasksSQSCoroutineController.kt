@@ -25,7 +25,6 @@ import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.channels.produce
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
@@ -44,7 +43,6 @@ import software.amazon.awssdk.services.sqs.SqsClient
 import software.amazon.awssdk.services.sqs.model.DeleteMessageRequest
 import software.amazon.awssdk.services.sqs.model.GetQueueUrlRequest
 import software.amazon.awssdk.services.sqs.model.Message
-import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest
 import software.amazon.awssdk.services.sqs.model.SendMessageBatchRequest
 import software.amazon.awssdk.services.sqs.model.SendMessageBatchRequestEntry
 import java.nio.ByteBuffer
@@ -89,6 +87,10 @@ class ScheduledTasksSQSCoroutine(
 
         /** SQS キューがなかった場合の次のキュー取得までのミリ秒 */
         const val PROCESS_RATE: Long = 60 * 1_000
+        /** SQS メッセージの可視性タイムアウトを更新する間隔（ミリ秒） */
+        const val CHANGE_VISIBILITY_CYCLE_MILLISECONDS: Long = 20_000
+        /** SQS メッセージの可視性タイムアウト */
+        const val VISIBILITY_SECONDS: Int = 30
     }
 
     private val s3Client: S3Client = awsInfrastructure.s3Client
@@ -99,37 +101,43 @@ class ScheduledTasksSQSCoroutine(
     /** 次の SQS キュー取得日時（ミリ秒） */
     private var nextProcessTime: Long = 0L
 
-    /** SQS キュー処理中フラグ */
+    /**
+     *  SQS キュー処理中フラグ
+     *  シャットダウン処理で、タスク実行中かを判定するために利用する
+     */
     var nowProcess: AtomicBoolean = AtomicBoolean(false)
 
-    /** SQS キュー処理（キャンセル処理用） */
+    /**
+     * SQS キュー処理
+     * シャットダウン処理で、タスクをキャンセルするために利用する
+     */
     private var job: Job? = null
 
     /**
-     * 前タスク完了後、指定間隔で実行し、例外が発生するタスク
-     * 例外をスローする
+     * 前タスク完了後、指定間隔で実行し、例外をスローするタスク
+     *
      * 例外発生後、次の起動タイミングで再び実行される。
      * Micronaut が異常終了することはない。
      */
-    @Scheduled(fixedDelay = "5s")
-    internal fun oneMinutesAfterException(): Unit = runBlocking {
-        if (!nowProcess.get()) {
-            return@runBlocking
-        }
-
-        log.info("【開始】例外が発生するタスク")
+//    @Scheduled(fixedDelay = "5s")
+//    internal fun oneMinutesAfterException(): Unit = runBlocking {
+//        if (!nowProcess.get()) {
+//            return@runBlocking
+//        }
+//
+//        log.info("【開始】例外が発生するタスク")
 //        when (Random.nextInt(3)) {
 //            0 -> {
 //                throw SubCustomException("サブカスタム例外が発生しました")
 //            }
 //            1 -> {
-        throw CustomException("カスタム例外が発生しました")
+//        throw CustomException("カスタム例外が発生しました")
 //            }
 //            else -> {
 //                throw IllegalArgumentException("何かのエラーが発生しました")
 //            }
 //        }
-    }
+//    }
 
     /**
      * 前タスク完了後、指定間隔で実行し、例外が発生するタスク
@@ -142,10 +150,10 @@ class ScheduledTasksSQSCoroutine(
         }
         log.info("SQS キュー処理タスク開始")
         nowProcess.set(true)
+        job = launch() {
 
-        runCatching {
-            // 処理を一括してキャンセルできるように親 Job を定義する
-            job = launch {
+            runCatching {
+                // 処理を一括してキャンセルできるように親 Job を定義する
                 // SQS キューからメッセージリストを取得する
                 val messages = getSqsMessages()
 
@@ -170,60 +178,43 @@ class ScheduledTasksSQSCoroutine(
                     // データを登録したキューを取得する
                     val receiveChannel: ReceiveChannel<String> = getChannel(dataList, this)
 
-                    launch {
-                        // キュー処理を並列起動する
-                        repeat(3) { num ->
-                            log.info("コルーチン $num 起動準備開始")
-                            // 非同期に実行する(launch)
-                            // 別々のスレッドを割り当てる(Dispatchers.IO)
-                            launch(Dispatchers.IO) {
-                                runCatching {
-                                    log.info("コルーチン $num 開始")
+                    // メッセージ処理を非同期で起動する
+                    val jobMessageProcess = launchMessageProcess(receiveChannel)
 
-                                    // キューを処理する
-                                    consumeChannel(receiveChannel)
-                                }
-                                    .onFailure { throwable ->
-                                        log.error("キュー処理で例外が発生しました ${throwable.message}")
-                                    }
-                                    .also {
-                                        log.info("コルーチン $num 終了")
-                                    }
-                                    .getOrThrow()
-                            }
-                            log.info("コルーチン $num 起動準備完了")
-                        }
-                        log.info("この Coroutine スコープのジョブがすべて完了するまで待機する")
-                    }
-                        .join()
+                    // メッセージ処理ジョブが処理中の間、
+                    // SQS メッセージの可視性タイムアウトを定期的に延長する処理を非同期で起動する
+                    launchChangeMessageVisibility(jobMessageProcess, message.receiptHandle())
+
+                    // SQS キューの処理が完了するするまで待機する
+                    // SQS キューの削除の順番を担保するために必要となる
+                    jobMessageProcess.join()
+
                     log.info("SQS キューを削除する ${message.messageId()}")
                     // SQS キューを削除する
                     deleteSqsQueue(message)
                 }
             }
-
-            log.info("タスクの全ジョブ完了を待機する")
-            // ジョブ完了を待機する
-            joinAll()
-            log.info("タスクの全ジョブ完了")
+                .onFailure { throwable ->
+                    // 例外が発生した場合
+                    log.error("SQS キュー処理タスクで例外が発生しました ${throwable.message}")
+                    // 例外が発生した場合は、次の処理まで間を開ける
+                    nextProcessTime = System.currentTimeMillis() + PROCESS_RATE
+                }
+                .also {
+                    nowProcess.set(false)
+                    log.info("SQS キュー処理タスク終了")
+                }
+                .getOrThrow()
         }
-            .onFailure { throwable ->
-                // 例外が発生した場合
-                log.error("SQS キュー処理タスクで例外が発生しました ${throwable.message}")
-                // 例外が発生した場合は、次の処理まで間を開ける
-                nextProcessTime = System.currentTimeMillis() + PROCESS_RATE
-            }
-            .also {
-                nowProcess.set(false)
-                log.info("SQS キュー処理タスク終了")
-            }
-            .getOrThrow()
     }
 
     /**
      * 実行中の処理をキャンセルする
      */
     fun cancel() {
+        // キャンセル後、即時に次のタスク実行がされないように設定する
+        nextProcessTime = System.currentTimeMillis() + PROCESS_RATE
+        // タスクをキャンセルする
         job?.cancel()
     }
 
@@ -233,13 +224,13 @@ class ScheduledTasksSQSCoroutine(
      * @return SQS キューリストを返す
      */
     private fun getSqsMessages(): List<Message> {
-        val receiveMessageRequest = ReceiveMessageRequest.builder()
-            .queueUrl(sqsQueueUrl)
-            .maxNumberOfMessages(1)
-            .build()
         log.info("SQS キュー取得開始")
         // SQS キューを取得する
-        val receiveMessageResponse = sqsClient.receiveMessage(receiveMessageRequest)
+        val receiveMessageResponse = sqsClient.receiveMessage { request ->
+            request
+                .queueUrl(sqsQueueUrl)
+                .maxNumberOfMessages(1)
+        }
         log.info("SQS キュー取得終了")
         return receiveMessageResponse.messages()
     }
@@ -259,6 +250,62 @@ class ScheduledTasksSQSCoroutine(
         val s3Object: ResponseBytes<GetObjectResponse> =
             s3Client.getObject(getObjectRequest, ResponseTransformer.toBytes())
         return s3Object.asUtf8String()
+    }
+
+    /**
+     * メッセージ処理を非同期で起動する
+     *
+     * @param receiveChannel メッセージの内容を順に取得するチャンネル
+     * @return メッセージ処理ジョブを返す
+     */
+    private fun CoroutineScope.launchMessageProcess(receiveChannel: ReceiveChannel<String>): Job {
+        return launch {
+            // キュー処理を並列起動する
+            repeat(3) { num ->
+                log.info("コルーチン $num 起動準備開始")
+                // 非同期に実行する(launch)
+                // 別々のスレッドを割り当てる(Dispatchers.IO)
+                launch(Dispatchers.IO) {
+                    runCatching {
+                        log.info("コルーチン $num 開始")
+
+                        // キューを処理する
+                        consumeChannel(receiveChannel)
+                    }
+                        .onFailure { throwable ->
+                            log.error("キュー処理で例外が発生しました ${throwable.message}")
+                        }
+                        .also {
+                            log.info("コルーチン $num 終了")
+                        }
+                        .getOrThrow()
+                }
+                log.info("コルーチン $num 起動準備完了")
+            }
+            log.info("この Coroutine スコープのジョブがすべて完了するまで待機する")
+        }
+    }
+
+    /**
+     * メッセージ処理ジョブが処理中の間、SQS メッセージの可視性タイムアウトを定期的に延長する
+     *
+     * @param jobMessageProcess メッセージ処理ジョブ
+     * @param receiptHandle 受信ハンドラ
+     */
+    private fun CoroutineScope.launchChangeMessageVisibility(jobMessageProcess: Job, receiptHandle: String) {
+        launch {
+            delay(CHANGE_VISIBILITY_CYCLE_MILLISECONDS)
+            while (jobMessageProcess.isActive) {
+                log.info("可視性タイムアウトを延長する")
+                val response = sqsClient.changeMessageVisibility { request ->
+                    request.queueUrl(sqsQueueUrl)
+                        .receiptHandle(receiptHandle)
+                        .visibilityTimeout(VISIBILITY_SECONDS)
+                }
+                log.info(response.toString())
+                delay(CHANGE_VISIBILITY_CYCLE_MILLISECONDS)
+            }
+        }
     }
 
     /**
@@ -290,7 +337,7 @@ class ScheduledTasksSQSCoroutine(
         log.info("Start getChannel")
         // データリスト中のデータを順にキューへ登録する
         for (data in dataList) {
-            log.info("Send $data")
+            log.info("チャンネルにデータを登録する $data")
             // データをキューに登録する
             send(data)
         }
@@ -307,12 +354,11 @@ class ScheduledTasksSQSCoroutine(
         receiveChannel: ReceiveChannel<String>
     ) {
         receiveChannel.consumeEach { data ->
-            log.info("request api $data")
+            log.info("API 呼び出し $data")
             apiClient.post(data)
             delay(Random.nextLong(1000, 5000))
         }
     }
-
 }
 
 /**
@@ -341,7 +387,7 @@ class ServerShutdownListener(
 
         // SQS 処理中は、シャットダウンを待機する処理
         // 1 秒間隔で、処理が完了しているかを確認している。
-        log.info("nowProcess: ${scheduledTasksSQSCoroutine.nowProcess.get()}")
+        log.info("処理中フラグ: ${scheduledTasksSQSCoroutine.nowProcess.get()}")
         runBlocking {
             log.info("処理待機開始")
             runCatching {
@@ -370,17 +416,17 @@ class ServerShutdownListener(
                 }
             log.info("処理待機終了")
         }
-        log.info("nowProcess: ${scheduledTasksSQSCoroutine.nowProcess.get()}")
+        log.info("処理中フラグ: ${scheduledTasksSQSCoroutine.nowProcess.get()}")
     }
 
     /**
      * SQS 処理を待ち合わせする
      */
     private suspend fun joinSqsProcess() {
-        withTimeout(10_000) {
+        withTimeout(30_000) {
             while (scheduledTasksSQSCoroutine.nowProcess.get()) {
                 delay(1000)
-                log.info("nowProcess: ${scheduledTasksSQSCoroutine.nowProcess.get()}")
+                log.info("処理中フラグ: ${scheduledTasksSQSCoroutine.nowProcess.get()}")
             }
         }
     }

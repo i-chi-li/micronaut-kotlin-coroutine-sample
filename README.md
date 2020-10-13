@@ -67,6 +67,9 @@ Micronaut フレームワークで、Kotlin Coroutine を利用するサンプ�
 ---
 
 # 実装サンプル
+各サンプルファイルは、複数のクラスなどをまとめて記載しているが、
+実際に記述する場合は、コーディング規約などに基づいてきちんとしたソースコードを記述すること。
+
 - Coroutine
     - [launch ビルダ](src/test/kotlin/micronaut/kotlin/coroutine/sample/coroutine/LaunchTest.kt)
     - [async ビルダ](src/test/kotlin/micronaut/kotlin/coroutine/sample/coroutine/AsyncTest.kt)
