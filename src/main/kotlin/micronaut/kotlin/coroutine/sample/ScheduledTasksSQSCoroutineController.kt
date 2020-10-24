@@ -159,7 +159,7 @@ class ScheduledTasksSQSCoroutine(
         }
         log.info("SQS キュー処理タスク開始")
         nowProcess.set(true)
-        job = launch() {
+        job = launch {
 
             runCatching {
                 // 処理を一括してキャンセルできるように親 Job を定義する
@@ -194,7 +194,7 @@ class ScheduledTasksSQSCoroutine(
                     // SQS メッセージの可視性タイムアウトを定期的に延長する処理を非同期で起動する
                     launchChangeMessageVisibility(jobMessageProcess, message.receiptHandle())
 
-                    // SQS キューの処理が完了するするまで待機する
+                    // SQS キューの処理が完了するまで待機する
                     // SQS キューの削除の順番を担保するために必要となる
                     jobMessageProcess.join()
 
