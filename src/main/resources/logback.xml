@@ -13,6 +13,9 @@
     <appender-ref ref="STDOUT"/>
   </root>
 
-<!--  <logger name="io.micronaut.context.condition" level="trace" />-->
+  <!-- 条件付きビーンのデバッグ用 -->
+  <!-- <logger name="io.micronaut.context.condition" level="trace" />-->
+  <!-- HTTP Client のデバッグ用 -->
+  <!-- <logger name="io.micronaut.http.client" level="trace"/>-->
 
 </configuration>

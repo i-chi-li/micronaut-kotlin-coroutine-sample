@@ -374,6 +374,7 @@ class ScheduledTasksSQSCoroutine(
  * サーバシャットダウンイベントリスナ
  */
 @Singleton
+@Requires(beans = [ScheduledTasksSQSCoroutine::class])
 class ServerShutdownListener(
     private val scheduledTasksSQSCoroutine: ScheduledTasksSQSCoroutine
 ) : ApplicationEventListener<ServerShutdownEvent> {
