@@ -77,7 +77,7 @@ Micronaut フレームワークで、Kotlin Coroutine を利用するサンプ�
     - [基本的なテスト実装](src/test/kotlin/micronaut/kotlin/coroutine/sample/coroutine/BasicsTest.kt)
 - Micronaut
     - [基本的なテスト実装](src/test/kotlin/micronaut/kotlin/coroutine/sample/micronaut/CoroutineControllerTest.kt)
-    - [プライベートメソッドのテスト実装](src/test/kotlin/micronaut/kotlin/coroutine/sample/micronaut/PrivateMethodTest.kt)
+    - [プライベートメンバーのテスト実装](src/test/kotlin/micronaut/kotlin/coroutine/sample/micronaut/PrivateMemberTest.kt)
     - [レスポンス用 XML 変換](src/main/kotlin/micronaut/kotlin/coroutine/sample/XmlController.kt)
     - [設定値の利用方法](src/main/kotlin/micronaut/kotlin/coroutine/sample/ConfigurationUsageController.kt)
     - [@Client を使用した宣言型HTTPクライアント](src/main/kotlin/micronaut/kotlin/coroutine/sample/HttpClientController.kt)

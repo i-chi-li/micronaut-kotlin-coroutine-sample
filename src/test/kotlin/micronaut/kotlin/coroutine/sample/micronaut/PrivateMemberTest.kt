@@ -12,7 +12,7 @@ import micronaut.kotlin.coroutine.sample.PrivateMembers
  * 通常の Java および、Kotlin で試験する方法と異なり、
  * ReflectionUtils を利用する必要がある。
  */
-class PrivateMethodTest : StringSpec({
+class PrivateMemberTest : StringSpec({
     "プライベートメソッドのテスト" {
         // プライベートメソッドを取得する
         val method = ReflectionUtils
