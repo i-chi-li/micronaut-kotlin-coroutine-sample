@@ -14,8 +14,13 @@ import micronaut.kotlin.coroutine.sample.PrivateMembers
  */
 class PrivateMemberTest : StringSpec({
     "プライベートメソッドのテスト" {
+        // テスト対象のインスタンスを生成する
+        val instance = PrivateMembers()
+
         // プライベートメソッドを取得する
         val method = ReflectionUtils
+            // 第一引数は、インスタンスで指定するとメソッドを取得できないので注意
+            // つまり instance::class.java のような指定はだめ
             .getDeclaredMethod(PrivateMembers::class.java, "hello", String::class.java)
             // Optional で結果が返る
             .get().apply {
@@ -23,17 +28,19 @@ class PrivateMemberTest : StringSpec({
                 isAccessible = true
             }
         // プライベートメソッドを実行する
-        val instance = PrivateMembers()
         val result: String = ReflectionUtils.invokeMethod(instance, method, "Foo")
         result shouldBe "Hello Foo"
     }
     "プライベートフィールドのテスト" {
+        // テスト対象のインスタンスを生成する
+        val instance = PrivateMembers()
+
         // プライベートメソッドを取得する
+        // 第一引数は、インスタンスで指定するとメソッドを取得できないので注意
+        // つまり instance::class.java のような指定はだめ
         val method = ReflectionUtils
             .getDeclaredMethod(PrivateMembers::class.java, "helloWithAge", String::class.java)
             .get().apply { isAccessible = true }
-
-        val instance = PrivateMembers()
 
         // プライベートメソッドを呼び出す
         val result1: String = ReflectionUtils.invokeMethod(instance, method, "Bar")
