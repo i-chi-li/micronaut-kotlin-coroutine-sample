@@ -16,7 +16,7 @@ Micronaut フレームワークで、Kotlin Coroutine を利用するサンプ�
 正確な情報は、以下の公式サイトを参照してください。
 
 - [Kotlin Coroutine](https://kotlinlang.org/docs/reference/coroutines/coroutines-guide.html)
-- [KotlinTest](https://github.com/kotest/kotest)
+- [Kotest](https://github.com/kotest/kotest)
 - [Micronaut](https://micronaut.io/)
 
 ---
