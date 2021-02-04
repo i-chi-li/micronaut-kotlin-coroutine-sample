@@ -93,27 +93,26 @@ class ScopesControllerTest(
         }.toSet()
         result.size shouldBe 4
     }
-// TODO @Infrastructure は、Bean として認識されない問題が発生しているため除外
-//    // Infrastructure
-//    "シングルトンのコンストラクタインフラストラクチャが呼び出し毎に生成されないこと" {
-//        val result = (0..3).map {
-//            client.constructorInfrastructure().id
-//        }.toSet()
-//        result.size shouldBe 1
-//    }
-//    "シングルトンのフィールドインフラストラクチャが呼び出し毎に生成されないこと" {
-//        val result = (0..3).map {
-//            client.fieldInfrastructure().id
-//        }.toSet()
-//        result.size shouldBe 1
-//    }
-//    "シングルトンの動的呼び出しインフラストラクチャが呼び出し毎に生成されないこと" {
-//        val result = (0..3).map {
-//            println("dynamicInfrastructureID: ${client.dynamicInfrastructure().id}")
-//            client.dynamicInfrastructure().id
-//        }.toSet()
-//        result.size shouldBe 1
-//    }
+    // Infrastructure
+    "シングルトンのコンストラクタインフラストラクチャが呼び出し毎に生成されないこと" {
+        val result = (0..3).map {
+            client.constructorInfrastructure().id
+        }.toSet()
+        result.size shouldBe 1
+    }
+    "シングルトンのフィールドインフラストラクチャが呼び出し毎に生成されないこと" {
+        val result = (0..3).map {
+            client.fieldInfrastructure().id
+        }.toSet()
+        result.size shouldBe 1
+    }
+    "シングルトンの動的呼び出しインフラストラクチャが呼び出し毎に生成されないこと" {
+        val result = (0..3).map {
+            println("dynamicInfrastructureID: ${client.dynamicInfrastructure().id}")
+            client.dynamicInfrastructure().id
+        }.toSet()
+        result.size shouldBe 1
+    }
     "シングルトンのコンストラクタスレッドローカルがスレッド別に生成されること" {
         // ローカルスレッドを利用しているため、別スレッドで処理を行う必要がある
         val result = (0..3).map { index ->
@@ -263,15 +262,14 @@ interface ScopesClient {
     @Get(value = "/dynamicPrototype", processes = [MediaType.APPLICATION_JSON])
     fun dynamicPrototype(): HashInfo
 
-// TODO @Infrastructure は、Bean として認識されない問題が発生しているため除外
-//    @Get(value = "/constructorInfrastructure", processes = [MediaType.APPLICATION_JSON])
-//    fun constructorInfrastructure(): HashInfo
-//
-//    @Get(value = "/fieldInfrastructure", processes = [MediaType.APPLICATION_JSON])
-//    fun fieldInfrastructure(): HashInfo
-//
-//    @Get(value = "/dynamicInfrastructure", processes = [MediaType.APPLICATION_JSON])
-//    fun dynamicInfrastructure(): HashInfo
+    @Get(value = "/constructorInfrastructure", processes = [MediaType.APPLICATION_JSON])
+    fun constructorInfrastructure(): HashInfo
+
+    @Get(value = "/fieldInfrastructure", processes = [MediaType.APPLICATION_JSON])
+    fun fieldInfrastructure(): HashInfo
+
+    @Get(value = "/dynamicInfrastructure", processes = [MediaType.APPLICATION_JSON])
+    fun dynamicInfrastructure(): HashInfo
 
     @Get(value = "/constructorThreadLocal", processes = [MediaType.APPLICATION_JSON])
     fun constructorThreadLocal(): List<HashInfo>

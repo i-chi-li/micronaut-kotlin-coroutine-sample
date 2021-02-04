@@ -15,7 +15,6 @@ private val log: Logger = LoggerFactory.getLogger("HttpClientController")
 
 /**
  * リトライアノテーション利用サンプル
- * TODO HTTP Client, Factory, Method etc...
  */
 @Controller("/retry")
 open class RetryAdviceController(
