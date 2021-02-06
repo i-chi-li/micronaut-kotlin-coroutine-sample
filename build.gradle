@@ -98,6 +98,9 @@ dependencies {
 
 // Java ソースの文字コードを指定
 [compileJava, compileTestJava]*.options*.encoding = "UTF-8"
+// Java バージョン
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
 
 test.classpath += configurations.developmentOnly
 

@@ -121,7 +121,7 @@ class StateX(
     // 前の処理結果値
     var result: Int = 0
 
-    // このメソッドは、説明範囲外なので無視
+    // このメソッドは、説明範囲外なので割愛
     override val context: CoroutineContext
         get() = TODO("Coroutine コンテキストを返す")
 
@@ -221,10 +221,32 @@ fun susC(b: Int, callback: Continuation<Int>): Int {
 以下のように suspendCoroutine ビルダを利用する。
 
 ```kotlin
-suspend fun suspendGet(a: Int): Int {
-    return suspendCoroutine {continuation ->
-        continuation.resumeWith(Result.success(123))
-    }
+// 変換したいコールバック型の関数
+fun callbackFunc(success: (Int) -> Unit, failure: (Throwable) -> Unit) {
+  try {
+    Thread.sleep(100)
+    success(Random.nextInt())
+  } catch (e: Throwable) {
+    failure(e)
+  }
+}
+
+// コールバック型の関数を suspend 型に変換する
+suspend fun suspendFunc() = suspendCoroutine<Int> { continuation ->
+  callbackFunc(
+    { result -> continuation.resume(result) },
+    { throwable -> continuation.resumeWithException(throwable) }
+  )
+}
+
+// 変換した関数を利用する
+fun example(): Unit = runBlocking {
+  runCatching {
+    val result = suspendFunc()
+    println("Success: $result")
+  }.onFailure { throwable ->
+    println("Error: ${throwable.message}")
+  }
 }
 ```
 
